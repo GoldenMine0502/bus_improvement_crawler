@@ -1,8 +1,8 @@
-package kr.goldenmine.bus_improvement_crawler
+package kr.goldenmine.bus_improvement_crawler.requests
 
-import kr.goldenmine.bus_improvement_crawler.response.BusCardServiceError
-import kr.goldenmine.bus_improvement_crawler.response.BusDetailResponse
-import kr.goldenmine.bus_improvement_crawler.response.BusSummaryResponse
+import kr.goldenmine.bus_improvement_crawler.requests.response.BusCardServiceError
+import kr.goldenmine.bus_improvement_crawler.requests.response.BusDetailResponse
+import kr.goldenmine.bus_improvement_crawler.requests.response.BusSummaryResponse
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET

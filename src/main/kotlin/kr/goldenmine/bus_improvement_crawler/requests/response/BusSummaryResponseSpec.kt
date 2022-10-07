@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.response
+package kr.goldenmine.bus_improvement_crawler.requests.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -13,13 +13,16 @@ routeNo	문자	응답결과 노선번호
 stgSttnNma	문자	응답결과 기점
 arrSttnNma	문자	응답결과 종점
  */
-data class BusSummaryResponse(
-    @SerializedName("count")
-    val count: Int,
+data class BusSummaryResponseSpec(
+    @SerializedName("routeId")
+    val routeId: String,
 
-    @SerializedName("status")
-    val status: String,
+    @SerializedName("routeNo")
+    val routeNo: String,
 
-    @SerializedName("result")
-    val results: List<BusSummaryResponseSpec>
+    @SerializedName("stgSttnNma")
+    val startLocation: String,
+
+    @SerializedName("arrSttnNma")
+    val finishLocation: String
 )

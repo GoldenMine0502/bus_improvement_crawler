@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.response
+package kr.goldenmine.bus_improvement_crawler.requests.response
 
 import com.google.gson.annotations.SerializedName
 
