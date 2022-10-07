@@ -7,7 +7,10 @@ import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import java.io.File
 
-class RequestBus {
+class RequestBus(
+    private val serviceKey: String,
+    private val locationId: Int
+) {
 
     fun crawlAll() {
         // 나무위키
@@ -85,24 +88,18 @@ class RequestBus {
 //        "300",
 //    )
 
-        val defaultApiKey = File("config/apikey.txt").readText()
-        val defaultLocationId = 28
-
-        println(defaultApiKey)
-        println(defaultLocationId)
-
         val failed = mutableSetOf<String>()
         val gson = Gson()
         val busIds = HashMap<String, List<String>>()
 
         buses.forEach { busName ->
             try {
-                val summary = RetrofitServices.BUS_CARD_SERVICE.requestBusSummary(defaultApiKey, defaultLocationId, busName).execute().body()
+                val summary = RetrofitServices.BUS_CARD_SERVICE.requestBusSummary(serviceKey, locationId, busName).execute().body()
                 println(summary)
 
                 if (summary != null) {
                     val detail =
-                        RetrofitServices.BUS_CARD_SERVICE.requestBusInDetail(defaultApiKey, defaultLocationId, summary.results[0].routeId)
+                        RetrofitServices.BUS_CARD_SERVICE.requestBusInDetail(serviceKey, locationId, summary.results[0].routeId)
                             .execute()
                             .body()
 

@@ -11,11 +11,10 @@ import retrofit2.Response
 import java.io.File
 import kotlin.math.ceil
 
-class RequestTraffic {
-    val namespace = "15052863/v1"
-    val serviceKey = "Eojpb8YSWns0To%2BoSRzqiOiX8V0eaT7Nnsd%2B9mkWJqTr1vy%2Fw8S3oj8M5v303ljFcVOXMn5cr09BrqaN3fnXSg%3D%3D"
-    val perPage = 4000
-
+class RequestTraffic(
+    val serviceKey: String,
+    val perPage: Int = 1000
+) {
     fun requestTraffic() {
         val folder = File("traffic")
         folder.mkdirs()
