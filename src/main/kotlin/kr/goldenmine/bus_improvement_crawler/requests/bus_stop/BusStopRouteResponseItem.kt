@@ -1,7 +1,6 @@
-package kr.goldenmine.bus_improvement_crawler.requests.response
+package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
 import com.google.gson.annotations.SerializedName
-import lombok.Data
 import javax.persistence.*
 import javax.xml.bind.annotation.*
 
@@ -40,21 +39,12 @@ import javax.xml.bind.annotation.*
 //    "TURN_BSTOPID", "turnBusStopId",
 //    "TURN_BSTOPNM", "turnBusStopName",
 //])
-@Table(name = "bus_stop")
-@SequenceGenerator(name = "bus_stop_sequence_generator", sequenceName = "bus_stop_sequence")
-@Entity
-@Data
 data class BusStopRouteResponseItem(
 //    @XmlType(TypeName="ADMINNM")
 //    @XmlElement(field="ADMINNM")
 //    @SerializedName("ADMINNM")
 //    @XmlElement(name="ADMINNM")
 //    @XmlValue
-    @Id
-    @SerializedName("id")
-    @Column(name="id")
-    var id: Int? = null,
-
     @SerializedName("adminName")
     @Column(name="admin_name")
     var ADMINNM: String? = null,

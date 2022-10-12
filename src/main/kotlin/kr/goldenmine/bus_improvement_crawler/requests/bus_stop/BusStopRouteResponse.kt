@@ -1,5 +1,6 @@
-package kr.goldenmine.bus_improvement_crawler.requests.response
+package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
+import kr.goldenmine.bus_improvement_crawler.requests.response.BusStopResponseMsgHeader
 import javax.xml.bind.annotation.XmlAccessType
 import javax.xml.bind.annotation.XmlAccessorType
 import javax.xml.bind.annotation.XmlRootElement

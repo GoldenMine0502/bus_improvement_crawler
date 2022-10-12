@@ -2,9 +2,9 @@ package kr.goldenmine.bus_improvement_crawler
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import kr.goldenmine.bus_improvement_crawler.requests.BusCardService
-import kr.goldenmine.bus_improvement_crawler.requests.BusStopService
-import kr.goldenmine.bus_improvement_crawler.requests.TrafficService
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.BusCardService
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.BusStopService
+import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.TrafficService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.jaxb.JaxbConverterFactory

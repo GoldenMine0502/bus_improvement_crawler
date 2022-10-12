@@ -1,7 +1,5 @@
-package kr.goldenmine.bus_improvement_crawler.requests
+package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
-import kr.goldenmine.bus_improvement_crawler.requests.response.BusStopRouteResponse
-import kr.goldenmine.bus_improvement_crawler.requests.response.BusStopSectionResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
@@ -9,7 +7,7 @@ import retrofit2.http.Query
 interface BusStopService {
     @GET("6280000/busRouteService/getBusRouteSectionList")
     fun getBusRouteSectionList(
-        @Query("ServiceKey") serviceKey:String,
+        @Query("ServiceKey", encoded = true) serviceKey:String,
         @Query("pageNo") page: Int,
         @Query("numOfRows") perPage: Int,
         @Query("routeId") routeId: String

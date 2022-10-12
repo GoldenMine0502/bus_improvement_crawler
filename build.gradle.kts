@@ -36,10 +36,14 @@ dependencies {
 //    kapt("com.tickaroo.tikxml:auto-value-tikxml:0.8.15")
 //    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.15")
 
+    // log
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    implementation("org.slf4j:slf4j-api:2.0.3")
+    implementation("org.slf4j:slf4j-simple:2.0.3")
     // gson
     implementation("com.google.code.gson:gson:2.9.1")
 
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    kapt("org.projectlombok:lombok:1.18.24")
     implementation("org.projectlombok:lombok:1.18.24")
 }
 

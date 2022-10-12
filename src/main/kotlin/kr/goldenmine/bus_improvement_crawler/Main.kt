@@ -2,7 +2,12 @@ package kr.goldenmine.bus_improvement_crawler
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.RequestBus
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBus
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
+import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
+import org.hibernate.boot.MetadataSources
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder
+import org.slf4j.LoggerFactory
 import java.io.File
 
 /*
@@ -11,15 +16,40 @@ import java.io.File
 (원인 파악 후 매우 허탈하였다!!!)
  */
 
-fun main(args: Array<String>) {
-    val type = object : TypeToken<Map<String, ArrayList<String>>>() {}.type
+class Main
+
+const val LOCATION_ID_INCHEON = 28
+
+fun main() {
+    val log = LoggerFactory.getLogger(Main::class.java)
     val gson = Gson()
+    val reader = File("keys.json").reader()
 
-    File("data/buslist.json").reader().use {
-//        val busIds = gson.fromJson<Map<String, ArrayList<String>>>(it, type)
+    val type = object : TypeToken<Keys>() {}.type
+    val keys = gson.fromJson<Keys>(reader, type)
+    reader.close()
 
-//        saveAll(busIds)
+    val toCrawl = listOf(
+        RequestBus(keys.requestBusCardKey, LOCATION_ID_INCHEON),
+        RequestTraffic(keys.requestBusTrafficKey),
+        RequestBusStop(keys.requestBusStopKey),
+    )
+
+    val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
+    val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
+
+    toCrawl.forEach {
+        log.info("${it.getFolder().path} started")
+
+        it.getFolder().mkdirs()
+
+        it.crawlAll()
+
+        val session = sessionFactory.openSession()
+        it.saveAll(session)
+        if (session.isOpen)
+            session.close()
+
+        log.info("${it.getFolder().path} finished")
     }
-
-//   RequestBus().saveAll()
 }

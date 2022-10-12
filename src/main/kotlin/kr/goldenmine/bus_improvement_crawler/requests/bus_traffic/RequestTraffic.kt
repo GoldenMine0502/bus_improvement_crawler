@@ -1,59 +1,79 @@
-package kr.goldenmine.bus_improvement_crawler.requests
+package kr.goldenmine.bus_improvement_crawler.requests.bus_traffic
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.RetrofitServices
+import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
 import kr.goldenmine.bus_improvement_crawler.requests.response.TrafficResponseSpec
+import org.hibernate.Session
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import kotlin.math.ceil
 
 class RequestTraffic(
     val serviceKey: String,
     val perPage: Int = 1000
-) {
-    fun requestTraffic() {
-        val folder = File("traffic")
-        folder.mkdirs()
+) : ICrawlRequest<TrafficService> {
+    val log: Logger = LoggerFactory.getLogger(RequestTraffic::class.java)
+    val gson = Gson()
 
-        val firstRequest = RetrofitServices.TRAFFIC_SERVICE.getTraffic(serviceKey, 1, 10).execute().body()
+    override fun getFolder(): File = File("bus_traffic")
 
-        if(firstRequest != null) {
+    override fun getRetrofitService(): TrafficService = Retrofit.Builder()
+        .baseUrl("https://api.odcloud.kr/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(ScalarsConverterFactory.create())
+        .build()
+        .create(TrafficService::class.java)
+
+    override fun saveAll(session: Session) {
+        val type = object : TypeToken<List<TrafficResponseSpec>>() {}.type
+        val reader = File(getFolder(), "data.json").bufferedReader()
+        val list = gson.fromJson<List<TrafficResponseSpec>>(reader, type)
+        reader.close()
+
+        val tx = session.beginTransaction()
+
+        var id = 1
+        for (response in list) {
+            val trafficInfo = toTrafficInfo(response)
+            trafficInfo.id = id++
+
+            session.save(trafficInfo)
+        }
+
+        tx.commit()
+    }
+
+    override fun crawlAll() {
+        val request = getRetrofitService()
+
+        val firstRequest = request.getTraffic(serviceKey, 1, 10).execute().body()
+
+        if (firstRequest != null) {
             val pages = ceil(firstRequest.matchCount.toDouble() / perPage).toInt()
             val list = mutableListOf<TrafficResponseSpec>()
 
             repeat(pages) {
-                val request = RetrofitServices.TRAFFIC_SERVICE.getTraffic(serviceKey, it + 1, perPage).execute().body()
-                if(request != null) {
-                    list.addAll(request.data)
+                val response = request.getTraffic(serviceKey, it + 1, perPage).execute().body()
+                if (response != null) {
+                    list.addAll(response.data)
                 }
                 println("page: ${it + 1}, size: ${list.size}")
                 Thread.sleep(1000L)
             }
 
-            val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
-            val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
-            val session = sessionFactory.openSession()
-
-            val tx = session.beginTransaction()
-
-            var id = 1
-            for(response in list) {
-                val trafficInfo = toTrafficInfo(response)
-                trafficInfo.id = id++
-
-                session.save(trafficInfo)
+            File(getFolder(), "data.json").bufferedWriter().use {
+                gson.toJson(list, it)
             }
-
-            tx.commit()
-            session.close()
-//            val totalResponse = TrafficResponse(perPage, list, firstRequest.matchCount, firstRequest.page, firstRequest.perPage, firstRequest.totalCount)
-//
-//            val file = File("traffic/result${System.currentTimeMillis()}.json")
-//            file.createNewFile()
-//            file.writer().use {
-//                val gson = Gson()
-//                gson.toJson(totalResponse, it)
-//            }
+        } else {
+            log.error("error while getting first request.")
         }
     }
 

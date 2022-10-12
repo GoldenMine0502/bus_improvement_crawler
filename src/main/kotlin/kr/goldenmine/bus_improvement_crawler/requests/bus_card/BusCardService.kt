@@ -1,15 +1,12 @@
-package kr.goldenmine.bus_improvement_crawler.requests
+package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 
-import kr.goldenmine.bus_improvement_crawler.requests.response.BusCardServiceError
-import kr.goldenmine.bus_improvement_crawler.requests.response.BusDetailResponse
-import kr.goldenmine.bus_improvement_crawler.requests.response.BusSummaryResponse
-import okhttp3.ResponseBody
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.BusDetailResponse
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.BusSummaryResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface BusCardService {
-
     // https://stcis.go.kr/openapi/busroute.json?
     // apikey=20221005142823j70lrh64mcq901lkbkl6o9a3mo&sdCd=28&routeNo=58
     @GET("openapi/busroute.json")

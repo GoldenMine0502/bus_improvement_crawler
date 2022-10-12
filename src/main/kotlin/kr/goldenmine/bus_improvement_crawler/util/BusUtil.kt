@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.requests
+package kr.goldenmine.bus_improvement_crawler.util
 
 val buses = listOf(
     // 간선버스

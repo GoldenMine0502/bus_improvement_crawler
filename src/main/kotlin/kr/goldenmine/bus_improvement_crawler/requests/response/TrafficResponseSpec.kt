@@ -1,7 +1,6 @@
 package kr.goldenmine.bus_improvement_crawler.requests.response
 
 import com.google.gson.annotations.SerializedName
-import kr.goldenmine.bus_improvement_crawler.requests.TrafficInfo
 
 /*
             "00시": "0",

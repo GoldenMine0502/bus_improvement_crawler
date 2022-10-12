@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.requests;
+package kr.goldenmine.bus_improvement_crawler.requests.bus_card;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
@@ -17,7 +17,7 @@ import javax.persistence.*;
         //, initialValue = 1,
         // allocationSize = 50
 )
-public class BusStopInfo {
+public class BusInfo {
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
     @SerializedName("id")
