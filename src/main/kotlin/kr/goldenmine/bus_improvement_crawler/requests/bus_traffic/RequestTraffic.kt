@@ -2,12 +2,8 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_traffic
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.RetrofitServices
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
-import kr.goldenmine.bus_improvement_crawler.requests.response.TrafficResponseSpec
 import org.hibernate.Session
-import org.hibernate.boot.MetadataSources
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
