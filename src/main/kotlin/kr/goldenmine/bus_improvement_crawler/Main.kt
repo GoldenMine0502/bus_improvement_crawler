@@ -21,5 +21,5 @@ fun main(args: Array<String>) {
 //        saveAll(busIds)
     }
 
-   RequestBus().saveAll()
+//   RequestBus().saveAll()
 }

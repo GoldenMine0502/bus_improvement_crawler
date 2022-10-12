@@ -1,13 +1,9 @@
 package kr.goldenmine.bus_improvement_crawler.requests
 
-import com.google.gson.Gson
-import kr.goldenmine.bus_improvement_crawler.requests.response.TrafficResponse
+import kr.goldenmine.bus_improvement_crawler.RetrofitServices
 import kr.goldenmine.bus_improvement_crawler.requests.response.TrafficResponseSpec
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import kotlin.math.ceil
 

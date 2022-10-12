@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm") version "1.7.10"
+    kotlin("kapt") version "1.7.10"
 }
 
 group = "org.example"
@@ -9,6 +10,8 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    maven("https://oss.sonatype.org/content/repositories/snapshots")
+    maven("https://www.jitpack.io")
 }
 
 dependencies {
@@ -25,6 +28,13 @@ dependencies {
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson
     implementation(group="com.squareup.retrofit2", name="converter-gson", version="2.9.0")
     implementation("com.squareup.retrofit2:converter-scalars:2.9.0")
+    implementation("com.squareup.retrofit2:converter-jaxb:2.9.0")
+//    implementation("com.tickaroo.tikxml:annotation:0.8.15")
+//    implementation("com.tickaroo.tikxml:core:0.8.15")
+//    kapt("com.github.Tickaroo.tikxml:processor-common:0.8.15")
+//    kapt("com.tickaroo.tikxml:processor:0.8.15")
+//    kapt("com.tickaroo.tikxml:auto-value-tikxml:0.8.15")
+//    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.15")
 
     // gson
     implementation("com.google.code.gson:gson:2.9.1")

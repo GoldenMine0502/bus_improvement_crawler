@@ -5,7 +5,6 @@ import java.io.File
 
 fun main() {
     val defaultApiKey = File("config/trafficapi.txt").readText()
-
     println(defaultApiKey)
 
     val requestTraffic = RequestTraffic(defaultApiKey)
