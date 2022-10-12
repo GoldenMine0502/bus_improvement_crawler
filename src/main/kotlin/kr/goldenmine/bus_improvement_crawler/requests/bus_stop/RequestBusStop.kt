@@ -43,7 +43,7 @@ class RequestBusStop(
             val response = request.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
 
             response?.msgBody?.itemList?.forEach {
-                println(it)
+                log.info(it.toString())
                 list.add(it)
             }
 
@@ -64,7 +64,7 @@ class RequestBusStop(
         val list = mutableListOf<BusStopSectionResponseItem>()
 
         items.forEach { busStopRouteResponseItem ->
-            println("request: $busStopRouteResponseItem")
+            log.info("request: $busStopRouteResponseItem")
             val routeId = busStopRouteResponseItem.ROUTEID
 
             if(routeId != null) {
@@ -75,7 +75,7 @@ class RequestBusStop(
                     routeId
                 ).execute()
 
-                println(response.body()?.msgBody?.itemList?.size)
+                log.info(response.body()?.msgBody?.itemList?.size.toString())
             }
 
             Thread.sleep(1000L)
