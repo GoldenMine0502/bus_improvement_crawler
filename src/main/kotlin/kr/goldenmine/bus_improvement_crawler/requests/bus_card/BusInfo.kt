@@ -1,40 +1,30 @@
-package kr.goldenmine.bus_improvement_crawler.requests.bus_card;
+package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 
-import com.google.gson.annotations.SerializedName;
-import lombok.*;
-
-import javax.persistence.*;
+import com.google.gson.annotations.SerializedName
+import lombok.*
+import javax.persistence.*
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(name = "bus_stop")
-@SequenceGenerator(name="bus_stop_sequence_generator",
-        sequenceName = "bus_stop_sequence"   // DB Sequence Name
-        //, initialValue = 1,
-        // allocationSize = 50
-)
-public class BusInfo {
-    @Id
-//    @GeneratedValue(strategy = GenerationType.AUTO)
+@SequenceGenerator(name = "bus_stop_sequence_generator", sequenceName = "bus_stop_sequence")
+class BusInfo {
+    @Id //    @GeneratedValue(strategy = GenerationType.AUTO)
     @SerializedName("id")
     @Column(name = "id")
-    int id;
+    var id = 0
 
     @SerializedName("route_id")
     @Column(name = "route_id")
-    String routeId;
+    var routeId: String? = null
 
     @SerializedName("route_no")
     @Column(name = "route_no")
-    String routeNo;
+    var routeNo: String? = null
 
     @SerializedName("routeNm")
     @Column(name = "route_name_start_to_finish")
-    String routeNameStartToFinish;
+    var routeNameStartToFinish: String? = null
 
     /*
         bus_stop_index INT(11),
@@ -43,13 +33,13 @@ public class BusInfo {
      */
     @SerializedName("bus_stop_index")
     @Column(name = "bus_stop_index")
-    int busStopIndex;
+    var busStopIndex = 0
 
     @SerializedName("bus_stop_id")
     @Column(name = "bus_stop_id")
-    String busStopId;
+    var busStopId: String? = null
 
     @SerializedName("bus_stop_name")
     @Column(name = "bus_stop_name")
-    String busStopName;
+    var busStopName: String? = null
 }
