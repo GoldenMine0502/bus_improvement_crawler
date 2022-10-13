@@ -5,8 +5,6 @@ import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
-import org.hibernate.boot.MetadataSources
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import retrofit2.Retrofit
@@ -15,11 +13,11 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import java.lang.Thread.sleep
 
-class RequestBus(
+class RequestBusCard(
     private val serviceKey: String,
     private val locationId: Int
 ): ICrawlRequest<BusCardService> {
-    private val log: Logger = LoggerFactory.getLogger(RequestBus::class.java)
+    private val log: Logger = LoggerFactory.getLogger(RequestBusCard::class.java)
 
     override fun getFolder() = File("bus_card")
 
