@@ -13,18 +13,42 @@ SHOW TABLES;
 
 DROP TABLE bus_stop;
 DROP TABLE hibernate_sequence;
-CREATE TABLE bus_stop(
-	id INT(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    route_id VARCHAR(20), 
-    route_no VARCHAR(10),
-    route_name_start_to_finish VARCHAR(100),
-    bus_stop_index INT(11),
-    bus_stop_id VARCHAR(20),
-    bus_stop_name VARCHAR(40)
+DROP TABLE bus_through_info;
+DROP TABLE bus_stop_station_info;
+CREATE TABLE bus_stop_station_info(
+	id INT(11) NOT NULL PRIMARY KEY,
+    name VARCHAR(40) NOT NULL,
+	pos_x FLOAT,
+    pos_y FLOAT,
+    short_id INT(11),
+    admin_name VARCHAR(20)
 );
+
+CREATE TABLE bus_info(
+	route_id VARCHAR(20) NOT NULL PRIMARY KEY,
+    route_len INT(11),
+    route_no VARCHAR(20),
+	origin_bus_stop_id VARCHAR(20),
+    dest_bus_stop_id VARCHAR(20),
+    bus_start_time VARCHAR(10),
+    bus_finish_time VARCHAR(10),
+    max_allocation_gap INT(11),
+    min_allocation_gap INT(11),
+    route_type INT(11),
+    turn_bus_stop_id VARCHAR(20)
+);
+
+CREATE TABLE bus_through_info(
+	id INT(11) NOT NULL PRIMARY KEY,
+	route_id VARCHAR(20),
+    bus_stop_station_id INT(11),
+    bus_stop_sequence INT(11)
+);
+
 CREATE TABLE hibernate_sequence(
 	next_val INT(11) PRIMARY KEY
 );
+
 INSERT INTO hibernate_sequence (next_val) VALUES (1);
 
 SELECT * FROM bus_stop;
