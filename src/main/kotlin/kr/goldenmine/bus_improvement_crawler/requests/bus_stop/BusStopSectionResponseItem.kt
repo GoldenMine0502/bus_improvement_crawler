@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType
 //@XmlRootElement(name = "itemList")
 @XmlAccessorType(XmlAccessType.FIELD)
 data class BusStopSectionResponseItem(
+    @SerializedName("adminName")
     val ADMINNM: String? = null,
     val BSTOPID: Int? = null,
     val BSTOPNM: String? = null,

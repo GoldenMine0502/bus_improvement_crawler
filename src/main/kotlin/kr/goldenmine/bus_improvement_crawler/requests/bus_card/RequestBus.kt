@@ -13,11 +13,11 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import java.io.File
 import java.lang.Thread.sleep
 
-class RequestBusCard(
+class RequestBus(
     private val serviceKey: String,
     private val locationId: Int
 ): ICrawlRequest<BusCardService> {
-    private val log: Logger = LoggerFactory.getLogger(RequestBusCard::class.java)
+    private val log: Logger = LoggerFactory.getLogger(RequestBus::class.java)
 
     override fun getFolder() = File("bus_card")
 

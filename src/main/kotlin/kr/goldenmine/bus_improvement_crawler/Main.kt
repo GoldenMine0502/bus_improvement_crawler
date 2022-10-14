@@ -2,7 +2,6 @@ package kr.goldenmine.bus_improvement_crawler
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBusCard
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
 import org.hibernate.boot.MetadataSources
@@ -30,8 +29,8 @@ fun main() {
     reader.close()
 
     val toCrawl = listOf(
-        RequestBusCard(keys.requestBusCardKey, LOCATION_ID_INCHEON),
-        RequestTraffic(keys.requestBusTrafficKey),
+//        RequestBusCard(keys.requestBusCardKey, LOCATION_ID_INCHEON),
+//        RequestTraffic(keys.requestBusTrafficKey),
         RequestBusStop(keys.requestBusStopKey),
     )
 
@@ -43,12 +42,17 @@ fun main() {
 
         it.getFolder().mkdirs()
 
-        it.crawlAll()
+//        it.crawlAll()
 
         val session = sessionFactory.openSession()
-        it.saveAll(session)
-        if (session.isOpen)
-            session.close()
+        try {
+            it.saveAll(session)
+        } catch (ex: Exception) {
+            log.error(ex.message, ex)
+        } finally {
+            if (session.isOpen)
+                session.close()
+        }
 
         log.info("${it.getFolder().path} finished")
     }

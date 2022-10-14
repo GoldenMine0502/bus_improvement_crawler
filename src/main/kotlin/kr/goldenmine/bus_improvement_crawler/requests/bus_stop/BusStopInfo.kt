@@ -17,9 +17,10 @@ import javax.persistence.*
     route_type INT(11),
     turn_bus_stop_id VARCHAR(20)
  */
+//@Data
 @Entity
 @Table(name = "bus_info")
-class BusInfo(
+class BusStopInfo(
     @Id
     @SerializedName("route_id")
     @Column(name = "route_id")
@@ -65,5 +66,15 @@ class BusInfo(
     @Column(name = "turn_bus_stop_id")
     val turnBusStopId: String? = null,
 ) {
+    override fun hashCode(): Int {
+        return routeId.toString().toInt()
+    }
 
+    override fun equals(other: Any?): Boolean {
+        if(other is BusStopInfo) {
+            return routeId == other.routeId
+        }
+
+        return false
+    }
 }

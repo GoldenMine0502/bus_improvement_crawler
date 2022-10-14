@@ -61,7 +61,7 @@ class RequestTraffic(
                 if (response != null) {
                     list.addAll(response.data)
                 }
-                println("page: ${it + 1}, size: ${list.size}")
+                log.info("page: ${it + 1}, size: ${list.size}")
                 Thread.sleep(1000L)
             }
 

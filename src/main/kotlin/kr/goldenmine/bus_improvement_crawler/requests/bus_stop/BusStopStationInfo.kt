@@ -1,11 +1,13 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
 import com.google.gson.annotations.SerializedName
+import lombok.Data
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
 
+//@Data
 @Entity
 @Table(name = "bus_stop_station_info")
 class BusStopStationInfo(

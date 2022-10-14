@@ -3,7 +3,6 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBusCard
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
 import org.slf4j.Logger
@@ -15,8 +14,8 @@ import java.io.File
 class RequestBusStop(
     val serviceKey: String,
     val perPage: Int = 1000
-): ICrawlRequest<BusStopService> {
-    private val log: Logger = LoggerFactory.getLogger(RequestBusCard::class.java)
+) : ICrawlRequest<BusStopService> {
+    private val log: Logger = LoggerFactory.getLogger(RequestBusStop::class.java)
     private val gson = Gson()
 
     override fun getFolder(): File = File("bus_stop")
@@ -37,19 +36,28 @@ class RequestBusStop(
     private fun crawlList(request: BusStopService): Set<BusStopRouteResponseItem> {
         val list = mutableSetOf<BusStopRouteResponseItem>()
 
+        val busTemp = buses.toMutableSet()
+
         buses.forEach { routeNo ->
-            val response = request.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
+            if (busTemp.contains(routeNo)) {
+                val response = request.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
 
-            response?.msgBody?.itemList?.forEach {
-                log.info(it.toString())
-                list.add(it)
+                log.info(
+                    "${response?.msgBody?.itemList?.size} ${
+                        response?.msgBody?.itemList?.map { it.ROUTENO }?.joinToString()
+                    }"
+                )
+                response?.msgBody?.itemList?.forEach {
+                    list.add(it)
+                    busTemp.remove(it.ROUTENO)
+                }
+
+                Thread.sleep(1000L)
             }
-
-            Thread.sleep(1000L)
         }
 
-        val file = File("busids.json")
-        if(!file.createNewFile()) file.createNewFile()
+        val file = File(getFolder(), "busids.json")
+        if (!file.createNewFile()) file.createNewFile()
 
         file.bufferedWriter().use {
             gson.toJson(list, it)
@@ -58,15 +66,17 @@ class RequestBusStop(
         return list
     }
 
+
     private fun crawlSection(request: BusStopService, items: Set<BusStopRouteResponseItem>) {
         val list = mutableListOf<BusStopSectionResponseItem>()
-        val map = HashMap<BusStopRouteResponseItem, MutableList<BusStopSectionResponseItem>>()
+
+        val map = mutableListOf<Pair<BusStopRouteResponseItem, BusStopSectionResponseItem>>()
 
         items.forEach { busStopRouteResponseItem ->
             log.info("request: $busStopRouteResponseItem")
             val routeId = busStopRouteResponseItem.ROUTEID
 
-            if(routeId != null) {
+            if (routeId != null) {
                 val response = request.getBusRouteSectionList(
                     serviceKey,
                     1,
@@ -74,58 +84,76 @@ class RequestBusStop(
                     routeId
                 ).execute()
 
-                map.computeIfAbsent(busStopRouteResponseItem) { ArrayList() }
+                val body = response.body()
 
-                val responseList = response.body()?.msgBody?.itemList
-                if(responseList != null) map[busStopRouteResponseItem]?.addAll(responseList)
-
-                log.info(response.body()?.msgBody?.itemList?.size.toString())
+                if (body != null) {
+                    body.msgBody?.itemList?.forEach {
+                        map.add(Pair(busStopRouteResponseItem, it))
+                    }
+                    log.info(response.body()?.msgBody?.itemList?.size.toString())
+                } else {
+                    log.warn("body is null")
+                }
             }
 
             Thread.sleep(1000L)
         }
 
-        val file = File("busstops.json")
-        if(!file.exists()) file.createNewFile()
+        val file = File(getFolder(), "busstops.json")
+        if (!file.exists()) file.createNewFile()
 
         file.bufferedWriter().use {
             gson.toJson(list, it)
         }
 
         val mapFile = File(getFolder(), "map.json")
+        if (!mapFile.exists()) mapFile.createNewFile()
+
         mapFile.bufferedWriter().use {
             gson.toJson(map, it)
         }
     }
 
     override fun saveAll(session: Session) {
-        val file = File("busstops.json")
-        val type = object : TypeToken<Map<BusStopRouteResponseItem, List<BusStopSectionResponseItem>>>() {}.type
-
+        val file = File(getFolder(), "map.json")
+        val type = object : TypeToken<ArrayList<Pair<BusStopRouteResponseItem, BusStopSectionResponseItem>>>() {}.type
         val reader = file.bufferedReader()
-        val map = gson.fromJson<Map<BusStopRouteResponseItem, List<BusStopSectionResponseItem>>>(reader, type)
+        val map = gson.fromJson<ArrayList<Pair<BusStopRouteResponseItem, BusStopSectionResponseItem>>>(reader, type)
         reader.close()
 
         val tx = session.beginTransaction()
 
         var id = 1
 
-        map.forEach { t, u ->
-            val busInfo = BusInfo(t.ROUTEID, t.ROUTELEN, t.ROUTENO,
-                t.ORIGIN_BSTOPID, t.DEST_BSTOPID,
-                t.FBUS_DEPHMS, t.LBUS_DEPHMS,
-                t.MAX_ALLOCGAP, t.MIN_ALLOCGAP,
-                t.ROUTETPCD, t.TURN_BSTOPID)
+        map.distinctBy { it.first }
+            .map { it.first }
+            .forEach { t ->
+                val busStopInfo = BusStopInfo(
+                    t.ROUTEID, t.ROUTELEN, t.ROUTENO,
+                    t.ORIGIN_BSTOPID, t.DEST_BSTOPID,
+                    t.FBUS_DEPHMS, t.LBUS_DEPHMS,
+                    t.MAX_ALLOCGAP, t.MIN_ALLOCGAP,
+                    t.ROUTETPCD, t.TURN_BSTOPID
+                )
 
-            session.save(busInfo)
-
-            u.forEach {
-                val busStopStationInfo = BusStopStationInfo(it.BSTOPID, it.BSTOPNM, it.POSX, it.POSY, it.SHORT_BSTOPID, it.ADMINNM)
-                val busThroughInfo = BusThroughInfo(id++, t.ROUTEID, it.BSTOPID, it.BSTOPSEQ)
-
-                session.save(busStopStationInfo)
-                session.save(busThroughInfo)
+                session.save(busStopInfo)
             }
+
+        map.distinctBy { it.second.BSTOPID }
+            .map { it.second }
+            .forEach { u ->
+                val busStopStationInfo = BusStopStationInfo(
+                    u.BSTOPID, u.BSTOPNM,
+                    u.POSX, u.POSY,
+                    u.SHORT_BSTOPID, u.ADMINNM
+                )
+                session.save(busStopStationInfo)
+            }
+
+        map.forEach { (t, u) ->
+            val busThroughInfo = BusThroughInfo(id++, t.ROUTEID, u.BSTOPID, u.BSTOPSEQ)
+
+            session.save(busThroughInfo)
         }
 
         tx.commit()

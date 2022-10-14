@@ -1,8 +1,10 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
 import com.google.gson.annotations.SerializedName
+import lombok.Data
 import javax.persistence.*
 
+//@Data
 @Entity
 @Table(name = "bus_through_info")
 //@SequenceGenerator(name = "bus_through_info_sequence_generator", sequenceName = "bus_stop_sequence")
@@ -14,7 +16,7 @@ class BusThroughInfo(
     bus_stop_sequence INT(11)
      */
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     @SerializedName("id")
     @Column(name = "id")
     val id: Int? = null,
