@@ -2,7 +2,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_traffic
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
+import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
 import org.hibernate.Session
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -13,20 +13,20 @@ import java.io.File
 import kotlin.math.ceil
 
 class RequestTraffic(
-    val serviceKey: String,
-    val perPage: Int = 1000
-) : ICrawlRequest<TrafficService> {
-    val log: Logger = LoggerFactory.getLogger(RequestTraffic::class.java)
-    val gson = Gson()
+    private val serviceKey: String,
+    private val perPage: Int = 1000
+) : ICrawlRetrofitRequest<TrafficService> {
+    private val log: Logger = LoggerFactory.getLogger(RequestTraffic::class.java)
+    private val gson = Gson()
 
-    override fun getFolder(): File = File("bus_traffic")
-
-    override fun getRetrofitService(): TrafficService = Retrofit.Builder()
+    override val service: TrafficService = Retrofit.Builder()
         .baseUrl("https://api.odcloud.kr/")
         .addConverterFactory(GsonConverterFactory.create())
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
         .create(TrafficService::class.java)
+
+    override fun getFolder(): File = File("bus_traffic")
 
     override fun saveAll(session: Session) {
         val type = object : TypeToken<List<TrafficResponseSpec>>() {}.type
@@ -47,17 +47,15 @@ class RequestTraffic(
         tx.commit()
     }
 
-    override fun crawlAll() {
-        val request = getRetrofitService()
-
-        val firstRequest = request.getTraffic(serviceKey, 1, 10).execute().body()
+    override fun crawlAll(session: Session) {
+        val firstRequest = service.getTraffic(serviceKey, 1, 10).execute().body()
 
         if (firstRequest != null) {
             val pages = ceil(firstRequest.matchCount.toDouble() / perPage).toInt()
             val list = mutableListOf<TrafficResponseSpec>()
 
             repeat(pages) {
-                val response = request.getTraffic(serviceKey, it + 1, perPage).execute().body()
+                val response = service.getTraffic(serviceKey, it + 1, perPage).execute().body()
                 if (response != null) {
                     list.addAll(response.data)
                 }

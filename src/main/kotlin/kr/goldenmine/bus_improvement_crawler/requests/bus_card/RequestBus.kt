@@ -3,6 +3,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
+import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
 import org.slf4j.Logger
@@ -16,33 +17,32 @@ import java.lang.Thread.sleep
 class RequestBus(
     private val serviceKey: String,
     private val locationId: Int
-): ICrawlRequest<BusCardService> {
+): ICrawlRetrofitRequest<BusCardService> {
     private val log: Logger = LoggerFactory.getLogger(RequestBus::class.java)
 
-    override fun getFolder() = File("bus_card")
-
-    override fun getRetrofitService(): BusCardService = Retrofit.Builder()
+    override val service: BusCardService = Retrofit.Builder()
         .baseUrl("https://stcis.go.kr/")
         .addConverterFactory(GsonConverterFactory.create())
         .addConverterFactory(ScalarsConverterFactory.create())
         .build()
         .create(BusCardService::class.java)
 
-    override fun crawlAll() {
-        val request = getRetrofitService()
+    override fun getFolder() = File("bus_card")
 
+
+    override fun crawlAll(session: Session) {
         val failed = mutableSetOf<String>()
         val gson = Gson()
         val busIds = HashMap<String, List<String>>()
 
         buses.forEach { busName ->
             try {
-                val summary = request.requestBusSummary(serviceKey, locationId, busName).execute().body()
+                val summary = service.requestBusSummary(serviceKey, locationId, busName).execute().body()
                 log.info(summary.toString())
 
                 if (summary != null) {
                     sleep(1000L)
-                    val detail = request.requestBusInDetail(serviceKey, locationId, summary.results[0].routeId).execute().body()
+                    val detail = service.requestBusInDetail(serviceKey, locationId, summary.results[0].routeId).execute().body()
 
                     log.info("${detail?.count} ${detail?.results?.get(0)?.routeNameStartToFinish}")
 

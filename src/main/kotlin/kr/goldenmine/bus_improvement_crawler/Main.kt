@@ -2,6 +2,7 @@ package kr.goldenmine.bus_improvement_crawler
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
 import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBus
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
@@ -30,7 +31,7 @@ fun main() {
     reader.close()
 
     val toCrawl = listOf(
-        RequestBus(keys.requestBusCardKey, LOCATION_ID_INCHEON),
+//        RequestBus(keys.requestBusCardKey, LOCATION_ID_INCHEON),
         RequestTraffic(keys.requestBusTrafficKey),
         RequestBusStop(keys.requestBusStopKey),
     )
@@ -40,21 +41,7 @@ fun main() {
 
     toCrawl.forEach {
         log.info("${it.getFolder().path} started")
-
-        it.getFolder().mkdirs()
-
-        it.crawlAll()
-
-        val session = sessionFactory.openSession()
-        try {
-            it.saveAll(session)
-        } catch (ex: Exception) {
-            log.error(ex.message, ex)
-        } finally {
-            if (session.isOpen)
-                session.close()
-        }
-
+        it.progress(sessionFactory)
         log.info("${it.getFolder().path} finished")
     }
 }

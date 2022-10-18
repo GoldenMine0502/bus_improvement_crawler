@@ -36,6 +36,11 @@ dependencies {
 //    kapt("com.tickaroo.tikxml:auto-value-tikxml:0.8.15")
 //    implementation("com.tickaroo.tikxml:retrofit-converter:0.8.15")
 
+    // https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-java
+    implementation("org.seleniumhq.selenium:selenium-java:4.4.0")
+    // https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager
+    implementation(group="io.github.bonigarcia", name="webdrivermanager", version="5.3.0")
+
     // log
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     implementation("org.slf4j:slf4j-api:2.0.3")

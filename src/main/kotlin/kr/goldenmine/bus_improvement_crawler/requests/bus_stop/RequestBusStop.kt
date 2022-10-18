@@ -2,7 +2,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
+import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
 import org.slf4j.Logger
@@ -12,35 +12,33 @@ import retrofit2.converter.jaxb.JaxbConverterFactory
 import java.io.File
 
 class RequestBusStop(
-    val serviceKey: String,
-    val perPage: Int = 1000
-) : ICrawlRequest<BusStopService> {
+    private val serviceKey: String,
+    private val perPage: Int = 1000
+) : ICrawlRetrofitRequest<BusStopService> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusStop::class.java)
     private val gson = Gson()
 
-    override fun getFolder(): File = File("bus_stop")
-
-    override fun getRetrofitService(): BusStopService = Retrofit.Builder()
+    override val service: BusStopService = Retrofit.Builder()
         .baseUrl("http://apis.data.go.kr/")
         .addConverterFactory(JaxbConverterFactory.create())
         .build()
         .create(BusStopService::class.java)
 
-    override fun crawlAll() {
-        val request = getRetrofitService()
+    override fun getFolder(): File = File("bus_stop")
 
-        val list = crawlList(request)
-        crawlSection(request, list)
+    override fun crawlAll(session: Session) {
+        val list = crawlList()
+        crawlSection(list)
     }
 
-    private fun crawlList(request: BusStopService): Set<BusStopRouteResponseItem> {
+    private fun crawlList(): Set<BusStopRouteResponseItem> {
         val list = mutableSetOf<BusStopRouteResponseItem>()
 
         val busTemp = buses.toMutableSet()
 
         buses.forEach { routeNo ->
             if (busTemp.contains(routeNo)) {
-                val response = request.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
+                val response = service.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
 
                 log.info(
                     "${response?.msgBody?.itemList?.size} ${
@@ -67,7 +65,7 @@ class RequestBusStop(
     }
 
 
-    private fun crawlSection(request: BusStopService, items: Set<BusStopRouteResponseItem>) {
+    private fun crawlSection(items: Set<BusStopRouteResponseItem>) {
         val list = mutableListOf<BusStopSectionResponseItem>()
 
         val map = mutableListOf<Pair<BusStopRouteResponseItem, BusStopSectionResponseItem>>()
@@ -77,7 +75,7 @@ class RequestBusStop(
             val routeId = busStopRouteResponseItem.ROUTEID
 
             if (routeId != null) {
-                val response = request.getBusRouteSectionList(
+                val response = service.getBusRouteSectionList(
                     serviceKey,
                     1,
                     perPage,
