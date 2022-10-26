@@ -28,7 +28,7 @@ data class BusStopSectionResponseItem(
     val BSTOPSEQ: Int? = null,
     val DIRCD: Int? = null,
     val PATHSEQ: Int? = null,
-    val POSX: Float? = null,
-    val POSY: Float? = null,
+    val POSX: Double? = null,
+    val POSY: Double? = null,
     val SHORT_BSTOPID: Int? = null,
 )

@@ -2,10 +2,10 @@ package kr.goldenmine.bus_improvement_crawler
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBus
+import io.github.bonigarcia.wdm.WebDriverManager
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
+import kr.goldenmine.bus_improvement_crawler.requests.naver_map.RequestNaver
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.LoggerFactory
@@ -22,6 +22,8 @@ class Main
 const val LOCATION_ID_INCHEON = 28
 
 fun main() {
+    WebDriverManager.chromedriver().setup()
+
     val log = LoggerFactory.getLogger(Main::class.java)
     val gson = Gson()
     val reader = File("keys.json").reader()
@@ -39,9 +41,17 @@ fun main() {
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
     val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
 
+    val session = sessionFactory.openSession()
+//    RequestNaver().crawlAll(session)
     toCrawl.forEach {
         log.info("${it.getFolder().path} started")
-        it.progress(sessionFactory)
+        try {
+            it.progress(sessionFactory)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
         log.info("${it.getFolder().path} finished")
     }
+
+    session.close()
 }

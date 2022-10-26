@@ -42,4 +42,6 @@ CREATE TABLE traffic(
 SELECT * FROM traffic;
 SELECT COUNT(*) FROM traffic;
 
+SELECT DISTINCT * FROM (SELECT start_name FROM traffic UNION ALL SELECT finish_name FROM traffic) T;
+
 DROP TABLE traffic;

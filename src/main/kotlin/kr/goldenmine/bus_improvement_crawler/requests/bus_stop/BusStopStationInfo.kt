@@ -30,11 +30,11 @@ class BusStopStationInfo(
 
     @SerializedName("pos_x")
     @Column(name = "pos_x")
-    val posX: Float? = null,
+    val posX: Double? = null,
 
     @SerializedName("pos_y")
     @Column(name = "pos_y")
-    val posY: Float? = null,
+    val posY: Double? = null,
 
     @SerializedName("short_id")
     @Column(name = "short_id")
