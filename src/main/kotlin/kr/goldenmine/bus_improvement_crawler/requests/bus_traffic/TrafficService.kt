@@ -1,5 +1,6 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_traffic
 
+import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.request.TrafficResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

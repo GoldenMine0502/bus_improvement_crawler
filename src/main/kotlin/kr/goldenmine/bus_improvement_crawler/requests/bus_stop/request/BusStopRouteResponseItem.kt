@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
+package kr.goldenmine.bus_improvement_crawler.requests.bus_stop.request
 
 import com.google.gson.annotations.SerializedName
 import javax.persistence.*

@@ -2,8 +2,9 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRequest
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.database.BusInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.request.BusDetailResponse
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
 import org.slf4j.Logger

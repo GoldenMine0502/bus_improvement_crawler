@@ -1,7 +1,7 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.BusDetailResponse
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.BusSummaryResponse
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.request.BusDetailResponse
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.request.BusSummaryResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

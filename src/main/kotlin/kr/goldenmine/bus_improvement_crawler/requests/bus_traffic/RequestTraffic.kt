@@ -3,6 +3,8 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_traffic
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
+import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.database.TrafficInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.request.TrafficResponseSpec
 import org.hibernate.Session
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

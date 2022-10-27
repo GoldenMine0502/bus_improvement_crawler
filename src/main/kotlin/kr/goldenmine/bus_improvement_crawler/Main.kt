@@ -5,7 +5,6 @@ import com.google.gson.reflect.TypeToken
 import io.github.bonigarcia.wdm.WebDriverManager
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
-import kr.goldenmine.bus_improvement_crawler.requests.naver_map.RequestNaver
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.LoggerFactory

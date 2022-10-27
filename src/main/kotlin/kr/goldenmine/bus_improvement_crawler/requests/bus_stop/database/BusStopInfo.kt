@@ -1,7 +1,6 @@
-package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
+package kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database
 
 import com.google.gson.annotations.SerializedName
-import lombok.Data
 import javax.persistence.*
 
 /*

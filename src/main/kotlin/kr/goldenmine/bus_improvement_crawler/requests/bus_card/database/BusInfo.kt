@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.requests.bus_card
+package kr.goldenmine.bus_improvement_crawler.requests.bus_card.database
 
 import com.google.gson.annotations.SerializedName
 import lombok.*

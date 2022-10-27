@@ -1,5 +1,7 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.request.BusStopRouteResponse
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.request.BusStopSectionResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

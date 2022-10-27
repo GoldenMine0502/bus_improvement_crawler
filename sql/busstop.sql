@@ -71,6 +71,8 @@ SELECT * FROM bus_stop_station_info WHERE id IN (
 );
 SELECT bus_stop_station_id FROM bus_through_info WHERE route_id IN (SELECT route_id FROM bus_info WHERE route_no = '58') ORDER BY bus_stop_sequence ASC;
 
+SELECT COUNT(*) FROM bus_stop_station_info;
+
 # safe mode 끄기
 SET SQL_SAFE_UPDATES = 0;
 DELETE FROM bus_stop;

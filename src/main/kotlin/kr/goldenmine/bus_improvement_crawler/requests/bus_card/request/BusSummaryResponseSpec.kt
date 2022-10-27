@@ -1,4 +1,4 @@
-package kr.goldenmine.bus_improvement_crawler.requests.bus_card
+package kr.goldenmine.bus_improvement_crawler.requests.bus_card.request
 
 import com.google.gson.annotations.SerializedName
 
