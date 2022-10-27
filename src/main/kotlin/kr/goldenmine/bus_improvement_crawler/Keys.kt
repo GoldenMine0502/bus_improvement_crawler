@@ -6,6 +6,7 @@ data class Keys(
     val requestBusTrafficKey: String,
     val requestNaverKeyId: String,
     val requestNaverKey: String,
+    val requestKakaoKey: String,
 ) {
 
 }

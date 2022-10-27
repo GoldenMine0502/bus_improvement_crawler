@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
                         "distance": 562,
                         "duration": 39060
  */
-class NaverGuide(
+data class NaverGuide(
     @SerializedName("pointIndex")
     private val pointIndex: Int?,
 

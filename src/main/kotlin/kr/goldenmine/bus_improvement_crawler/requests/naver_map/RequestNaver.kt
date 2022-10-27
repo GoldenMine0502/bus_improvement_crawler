@@ -2,6 +2,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.naver_map
 
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
 import kr.goldenmine.bus_improvement_crawler.requests.naver_map.request.PathResponse
+import kr.goldenmine.bus_improvement_crawler.util.Point
 import org.hibernate.Session
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,22 +27,19 @@ class RequestNaver(
     override fun getFolder() = File("naver")
 
     override fun crawlAll(session: Session) {
-        val start = "126.66532891179264,37.366824870185276"
-        val goal = "126.65791852187012,37.365799853663844"
 
-        service.getPath(serviceKeyId, serviceKey, start, goal).enqueue(object : Callback<PathResponse> {
-            override fun onResponse(call: Call<PathResponse>, response: Response<PathResponse>) {
-//                println(response.body())
-                println(response.isSuccessful)
+    }
 
-                println(response.body()?.route?.traoptimal?.get(0)?.path)
-            }
+    fun convert() {
 
-            override fun onFailure(call: Call<PathResponse>, t: Throwable) {
-                t.printStackTrace()
-            }
+    }
 
-        })
+    fun getStringFromPoint(point: Point) {
+
+    }
+
+    fun apiTest(start: String, goal: String): PathResponse? {
+        return service.getPath(serviceKeyId, serviceKey, start, goal).execute().body()
     }
 
     override fun saveAll(session: Session) {
