@@ -30,25 +30,6 @@ class RequestTraffic(
 
     override fun getFolder(): File = File("bus_traffic")
 
-    override fun saveAll(session: Session) {
-        val type = object : TypeToken<List<TrafficResponseSpec>>() {}.type
-        val reader = File(getFolder(), "data.json").bufferedReader()
-        val list = gson.fromJson<List<TrafficResponseSpec>>(reader, type)
-        reader.close()
-
-        val tx = session.beginTransaction()
-
-        var id = 1
-        for (response in list) {
-            val trafficInfo = toTrafficInfo(response)
-            trafficInfo.id = id++
-
-            session.save(trafficInfo)
-        }
-
-        tx.commit()
-    }
-
     override fun crawlAll(session: Session) {
         val firstRequest = service.getTraffic(serviceKey, 1, 10).execute().body()
 
@@ -71,6 +52,25 @@ class RequestTraffic(
         } else {
             log.error("error while getting first request.")
         }
+    }
+
+    override fun saveAll(session: Session) {
+        val type = object : TypeToken<List<TrafficResponseSpec>>() {}.type
+        val reader = File(getFolder(), "data.json").bufferedReader()
+        val list = gson.fromJson<List<TrafficResponseSpec>>(reader, type)
+        reader.close()
+
+        val tx = session.beginTransaction()
+
+        var id = 1
+        for (response in list) {
+            val trafficInfo = toTrafficInfo(response)
+            trafficInfo.id = id++
+
+            session.save(trafficInfo)
+        }
+
+        tx.commit()
     }
 
     fun toTrafficInfo(response: TrafficResponseSpec): TrafficInfo {

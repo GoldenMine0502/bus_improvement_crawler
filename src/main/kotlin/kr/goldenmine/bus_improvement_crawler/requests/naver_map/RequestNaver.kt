@@ -1,6 +1,7 @@
 package kr.goldenmine.bus_improvement_crawler.requests.naver_map
 
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
+import kr.goldenmine.bus_improvement_crawler.requests.kakao_map.database.RoadNameInfo
 import kr.goldenmine.bus_improvement_crawler.requests.naver_map.request.PathResponse
 import kr.goldenmine.bus_improvement_crawler.util.Point
 import org.hibernate.Session
@@ -27,7 +28,12 @@ class RequestNaver(
     override fun getFolder() = File("naver")
 
     override fun crawlAll(session: Session) {
+        val query = session.createSQLQuery("SELECT * FROM road_name_info")
+        val list = query.list() as List<RoadNameInfo?>
 
+        list.forEach {
+
+        }
     }
 
     fun convert() {

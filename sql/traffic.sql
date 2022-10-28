@@ -39,9 +39,22 @@ CREATE TABLE traffic(
 	finish_name VARCHAR(30)
 );
 
+CREATE TABLE road_name_info(
+	id INT(11) NOT NULL PRIMARY KEY,
+    road_name VARCHAR(30),
+    pos_x DOUBLE,
+    pos_y DOUBLE
+);
+
 SELECT * FROM traffic;
+SELECT * FROM road_name_info;
 SELECT COUNT(*) FROM traffic;
 
-SELECT DISTINCT * FROM (SELECT start_name FROM traffic UNION ALL SELECT finish_name FROM traffic) T;
+SELECT * FROM traffic WHERE start_name = '제3산용4거리';
+SELECT DISTINCT(road_name) FROM traffic;
+
+SELECT start_name FROM (SELECT start_name FROM traffic UNION ALL SELECT finish_name FROM traffic) T;
+SELECT COUNT(start_name) FROM (SELECT start_name FROM traffic UNION ALL SELECT finish_name FROM traffic) T;
+SELECT DISTINCT start_name FROM traffic UNION ALL SELECT DISTINCT finish_name FROM traffic;
 
 DROP TABLE traffic;

@@ -20,18 +20,22 @@ class RoadNameInfo(
     @Id
     @Column(name = "id")
     @SerializedName("id")
-    val id: Int? = null,
+    var id: Int = 0,
 
     @Column(name = "road_name")
     @SerializedName("roadName")
-    val roadName: String? = null,
+    var roadName: String? = null,
 
     @Column(name = "pos_x")
     @SerializedName("posX")
-    val posX: Double? = null,
+    var posX: Double? = null,
 
     @Column(name = "pos_y")
     @SerializedName("posY")
-    val posY: Double? = null,
-    ) {
+    var posY: Double? = null,
+) {
+
+    override fun toString(): String {
+        return "{id=$id,roadName=$roadName,posX=$posX,posY=$posY}"
+    }
 }

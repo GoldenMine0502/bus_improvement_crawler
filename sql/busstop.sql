@@ -15,6 +15,7 @@ DROP TABLE bus_info;
 DROP TABLE hibernate_sequence;
 DROP TABLE bus_through_info;
 DROP TABLE bus_stop_station_info;
+DROP TABLE bus_path_info;
 
 CREATE TABLE bus_stop_station_info(
 	id INT(11) NOT NULL PRIMARY KEY,
@@ -44,6 +45,15 @@ CREATE TABLE bus_through_info(
 	route_id VARCHAR(20),
     bus_stop_station_id INT(11),
     bus_stop_sequence INT(11)
+);
+
+CREATE TABLE bus_path_info(
+	id INT(11) NOT NULL PRIMARY KEY,
+    from_id INT(11),
+    to_id INT(11),
+    sequence INT(11),
+    pos_x DOUBLE,
+    pos_y DOUBLE
 );
 
 CREATE TABLE hibernate_sequence(
