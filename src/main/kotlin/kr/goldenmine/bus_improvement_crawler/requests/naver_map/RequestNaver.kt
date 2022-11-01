@@ -118,7 +118,7 @@ class RequestNaver(
                                 }
                             }
 
-                            sleep(300L)
+                            sleep(500L)
                         }
                     }
                 }
