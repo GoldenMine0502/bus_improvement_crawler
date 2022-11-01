@@ -6,6 +6,7 @@ import io.github.bonigarcia.wdm.WebDriverManager
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
 import kr.goldenmine.bus_improvement_crawler.requests.kakao_map.RequestKakao
+import kr.goldenmine.bus_improvement_crawler.requests.naver_map.RequestNaver
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.LoggerFactory
@@ -37,23 +38,24 @@ fun main() {
 //        RequestBus(keys.requestBusCardKey, LOCATION_ID_INCHEON),
 //        RequestTraffic(keys.requestBusTrafficKey),
 //        RequestBusStop(keys.requestBusStopKey),
-        RequestKakao(keys.requestKakaoKey),
+//        RequestKakao(keys.requestKakaoKey),
+        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey)
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
     val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
 
     val session = sessionFactory.openSession()
-//    RequestNaver().crawlAll(session)
-    toCrawl.forEach {
-        log.info("${it.getFolder().path} started")
-        try {
-            it.progress(sessionFactory)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        log.info("${it.getFolder().path} finished")
-    }
+    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
+//    toCrawl.forEach {
+//        log.info("${it.getFolder().path} started")
+//        try {
+//            it.progress(sessionFactory)
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//        }
+//        log.info("${it.getFolder().path} finished")
+//    }
 
     session.close()
 }

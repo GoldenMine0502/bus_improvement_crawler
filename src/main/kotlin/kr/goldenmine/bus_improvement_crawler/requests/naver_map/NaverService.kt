@@ -13,4 +13,6 @@ interface NaverService {
         @Query("start") start: String,
         @Query("goal") goal: String,
     ): Call<PathResponse>
+
+
 }
