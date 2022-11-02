@@ -3,6 +3,7 @@ package kr.goldenmine.bus_improvement_crawler
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.bonigarcia.wdm.WebDriverManager
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardSelenium
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
 import kr.goldenmine.bus_improvement_crawler.requests.kakao_map.RequestKakao
@@ -47,15 +48,16 @@ fun main() {
 
     val session = sessionFactory.openSession()
 //    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
-    toCrawl.forEach {
-        log.info("${it.getFolder().path} started")
-        try {
-            it.progress(sessionFactory)
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-        }
-        log.info("${it.getFolder().path} finished")
-    }
+    RequestBusCardSelenium().crawlAll(session)
+//    toCrawl.forEach {
+//        log.info("${it.getFolder().path} started")
+//        try {
+//            it.progress(sessionFactory)
+//        } catch (ex: Exception) {
+//            ex.printStackTrace()
+//        }
+//        log.info("${it.getFolder().path} finished")
+//    }
 
     session.close()
 }

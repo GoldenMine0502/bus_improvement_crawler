@@ -164,6 +164,7 @@ class RequestNaver(
             log.info("$routeNo written")
         }
 
+        log.info("commit")
         tx.commit()
     }
 
