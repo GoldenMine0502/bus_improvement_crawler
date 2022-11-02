@@ -138,17 +138,18 @@ class RequestBusCardSelenium: ICrawlSingleSeleniumRequest {
                 val alert: Alert = driver.switchTo().alert()
                 alert.accept()
 
-                // download
-                val downloadButton = doWhileNotNullOrException(50, 5000L) {
+                // download, wait up to 5 min
+                val downloadButton = doWhileNotNullOrException(60, 5000L) {
                     driver.findElements(By.id("btnExport")).firstOrNull { it.text.contains("다운로드") }
                 }
                 val js = driver as JavascriptExecutor
                 try {
                     js.executeAsyncScript("rgrstyExcelExport('10')")
                 } catch(ex: Exception) {
-                    log.error(ex.message, ex)
+                    log.info("timeout")
+//                    log.error(ex.message, ex)
                 }
-                sleep(3000L)
+                sleep(1000L)
             }
         }
 
