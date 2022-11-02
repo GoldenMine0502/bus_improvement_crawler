@@ -1,11 +1,11 @@
 package kr.goldenmine.bus_improvement_crawler.requests.naver_map
 
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.RequestBus
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.database.BusInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopStationInfo
+import kr.goldenmine.bus_improvement_crawler.requests.naver_map.database.BusPathInfo
 import kr.goldenmine.bus_improvement_crawler.requests.naver_map.request.PathResponse
 import kr.goldenmine.bus_improvement_crawler.util.Point
 import kr.goldenmine.bus_improvement_crawler.util.convertTM127toWGS84
@@ -38,7 +38,13 @@ class RequestNaver(
 
     override fun getFolder() = File("naver")
 
-    fun executeRouteQuery(session: Session, routeId: String): List<BusStopStationInfo> {
+    private fun executeBusQuery(session: Session): List<BusStopInfo> {
+        val busInfoList = (session.createQuery("FROM BusStopInfo").list() as List<BusStopInfo?>).filterNotNull()
+
+        return busInfoList
+    }
+
+    private fun executeRouteQuery(session: Session, routeId: String): List<BusStopStationInfo> {
         val routes = (session.createQuery(
             "FROM BusStopStationInfo busStopStationInfo WHERE busStopStationInfo.id IN (" +
                     "SELECT busStopStationId FROM BusThroughInfo busThroughInfo WHERE busThroughInfo.routeId = '$routeId' ORDER BY busThroughInfo.busStopSequence ASC" +
@@ -51,14 +57,13 @@ class RequestNaver(
     override fun crawlAll(session: Session) {
         getFolder().mkdirs()
 
-        val busInfoList = session.createQuery("FROM BusStopInfo").list() as List<BusStopInfo?>
+        val busInfoList = executeBusQuery(session)
 
         log.info("bus size: ${busInfoList.size}")
 //        log.info(busInfoList.toString())
 
         val totalSize = busInfoList
             .asSequence()
-            .filterNotNull()
             .map { it.routeId }
             .filterNotNull()
             .map { executeRouteQuery(session, it) }
@@ -70,20 +75,20 @@ class RequestNaver(
         var totalIndex = 0
         busInfoList
             .asSequence()
-            .filterNotNull()
             .forEach { busInfo ->
                 val routeNo = busInfo.routeNo
                 val routeId = busInfo.routeId
-                if (routeId != null) {
+                if (routeNo != null && routeId != null) {
                     val routes = executeRouteQuery(session, routeId)
-
-                    log.info("routes of $totalIndex $routeNo $routeId: ${routes.size}")
-                    totalIndex++
 
                     // 빈파일이면 안됨. 50byte는 넘겠지.
                     val fileSize = getFolder().listFiles()?.count {
-                        it.name.startsWith("$routeNo-") && it.length() > 50
+                        it.name.startsWith("$routeNo-") && it.length() > 50 && !it.name.substring(routeNo.length + 1).contains("-")
                     } ?: 0
+
+                    log.info("routes of $totalIndex $routeNo $routeId: ${routes.size} $fileSize")
+                    totalIndex++
+
 
                     if (fileSize < routes.size - 1) {
                         for (index in 0 until routes.size - 1) {
@@ -128,9 +133,36 @@ class RequestNaver(
     }
 
     override fun saveAll(session: Session) {
+        val type = object : TypeToken<PathResponse>() {}.type
+
         val tx = session.beginTransaction()
+        val busList = executeBusQuery(session)
+        var totalId = 0
+        busList.forEach {busStopInfo ->
+            val routeId = busStopInfo.routeId
+            val routeNo = busStopInfo.routeNo
 
+            if(routeNo != null && routeId != null) {
+                val busStopInfoList = executeRouteQuery(session, routeId)
 
+                for(index in 0 until busStopInfoList.size - 1) {
+                    val from = busStopInfoList[index]
+                    val to = busStopInfoList[index + 1]
+
+                    val file = File(getFolder(), "$routeNo-$index.json")
+                    val response = gson.fromJson<PathResponse>(file.readText(), type)
+
+                    if(from.id != null && to.id != null) {
+                        response?.route?.traoptimal?.get(0)?.path?.forEach {
+                            val pathInfo = BusPathInfo(totalId++, from.id, to.id, index, it[0], it[1])
+
+                            session.save(pathInfo)
+                        }
+                    }
+                }
+            }
+            log.info("$routeNo written")
+        }
 
         tx.commit()
     }

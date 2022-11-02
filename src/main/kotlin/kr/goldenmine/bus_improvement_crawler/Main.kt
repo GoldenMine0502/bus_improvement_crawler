@@ -46,16 +46,16 @@ fun main() {
     val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
 
     val session = sessionFactory.openSession()
-    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
-//    toCrawl.forEach {
-//        log.info("${it.getFolder().path} started")
-//        try {
-//            it.progress(sessionFactory)
-//        } catch (ex: Exception) {
-//            ex.printStackTrace()
-//        }
-//        log.info("${it.getFolder().path} finished")
-//    }
+//    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
+    toCrawl.forEach {
+        log.info("${it.getFolder().path} started")
+        try {
+            it.progress(sessionFactory)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        log.info("${it.getFolder().path} finished")
+    }
 
     session.close()
 }
