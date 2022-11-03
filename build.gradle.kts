@@ -24,6 +24,9 @@ dependencies {
     // https://mvnrepository.com/artifact/com.h2database/h2
     implementation(group="com.h2database", name="h2", version="2.1.214")
 
+    // https://mvnrepository.com/artifact/com.opencsv/opencsv
+    implementation("com.opencsv:opencsv:5.7.1")
+
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     // https://mvnrepository.com/artifact/com.squareup.retrofit2/converter-gson

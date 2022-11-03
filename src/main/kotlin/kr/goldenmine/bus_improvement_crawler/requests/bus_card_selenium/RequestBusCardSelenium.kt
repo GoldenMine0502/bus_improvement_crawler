@@ -8,6 +8,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.JavascriptExecutor
 import org.openqa.selenium.WebDriver
 import org.openqa.selenium.chrome.ChromeDriver
+import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
@@ -22,15 +23,26 @@ class RequestBusCardSelenium: ICrawlSingleSeleniumRequest {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardSelenium::class.java)
 
     override val driver: WebDriver
-        get() = ChromeDriver()
+        get() {
+            val prefs: MutableMap<String, Any> = HashMap()
+            prefs["download.default_directory"] = getFolder().absolutePath
+
+            val options = ChromeOptions()
+            options.setExperimentalOption("prefs", prefs)
+
+            return ChromeDriver(options)
+        }
 
     override fun getFolder(): File = File("bus_card_selenium")
 
     override fun crawlAll(session: Session) {
+        val driver = driver
+
+        Runtime.getRuntime().addShutdownHook(Thread { driver.quit() })
+
         val dateFromText = "19"
         val middleText = "19"
         val dateToText = "21"
-        val driver = driver
         val busStopStationInfoList = (session.createQuery("FROM BusStopStationInfo").list() as List<BusStopStationInfo?>).filterNotNull()
 
         val incheonList = setOf("강화군", "계양구", "남동구", "동구", "미추홀구",
