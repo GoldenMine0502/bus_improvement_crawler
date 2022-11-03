@@ -19,11 +19,14 @@ import java.io.File
 import java.lang.Thread.sleep
 import java.time.Duration
 
-class RequestBusCardSeleniumMulti(override val threadSize: Int, private val headless: Boolean = true) : ICrawlMultiSeleniumRequest<BusStopStationInfo> {
+class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSize: Int = threadSize, private val headless: Boolean = true) :
+    ICrawlMultiSeleniumRequest<BusStopStationInfo> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardSeleniumMulti::class.java)
 
-    private val incheonList = setOf("강화군", "계양구", "남동구", "동구", "미추홀구",
-        "부평구", "서구", "연수구", "옹진군", "중구")
+    private val incheonList = setOf(
+        "강화군", "계양구", "남동구", "동구", "미추홀구",
+        "부평구", "서구", "연수구", "옹진군", "중구"
+    )
 
     private val incheonMap = mapOf(
         Pair("강화군", "28710"),
@@ -54,7 +57,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
         val options = ChromeOptions()
         options.setExperimentalOption("prefs", prefs)
 
-        if(headless)
+        if (headless)
             options.addArguments("--headless")
 
         return ChromeDriver(options)
@@ -65,7 +68,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
 
         val exclude = mutableSetOf<Int>()
 
-        repeat(threadSize) { index ->
+        repeat(maxThreadSize) { index ->
             val innerFolder = File(getFolder(), index.toString())
 
             innerFolder.listFiles()?.filterNotNull()?.forEach { file ->
@@ -84,7 +87,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
     }
 
     override fun init(session: Session) {
-        repeat(threadSize) { index ->
+        repeat(maxThreadSize) { index ->
             val innerFolder = File(getFolder(), index.toString())
 
             innerFolder.listFiles()?.filterNotNull()?.forEach { src ->
@@ -98,17 +101,17 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
                         dest = File(getFolder(), "$index/${data}.csv")
                     }
 
-                    if(!src.name.startsWith(data)) {
+                    if (!src.name.startsWith(data)) {
                         val success = src.renameTo(dest)
                         if (success) {
                             println("Renaming ${dest.name} succeed")
                         }
                     }
-                } catch(ex: Exception) {
-                    src.delete()
-                    log.error(ex.message, ex)
+                } catch (ex: Exception) {
                     log.error(src.readText())
+                    log.error(ex.message, ex)
                     log.error(src.path)
+                    src.delete()
                 }
             }
         }
@@ -117,7 +120,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
     override fun getFolder(): File = File("bus_card_selenium_multi")
 
     override fun doCrawlOne(session: Session, driver: WebDriver, obj: BusStopStationInfo) {
-        if(obj.shortId != null) {
+        if (obj.shortId != null) {
             log.info(obj.shortId.toString())
             driver.get("https://stcis.go.kr/pivotIndi/wpsPivotIndicator.do?siteGb=P&indiClss=IC03")
 
@@ -171,7 +174,12 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
             // start date
 //            setStartDate(driver, dateFromText)
 
-            // 인천광역시 선택 searchPopZoneSd
+            val areaTab = doWhileNotNullOrException {
+                driver.findElements(By.className("searchSttnAreaGubun")).firstOrNull { it.text.contains("시도") }
+            }
+            areaTab.click()
+
+            // 인천광역시 선택 searchPopSttnZoneSd
             Select(
                 doWhileNotNullOrException {
                     driver.findElement(By.id("searchPopSttnZoneSd"))
@@ -181,13 +189,13 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
             sleep(1000L)
 
             // 구 선택 searchPopSttnZoneSgg
-            Select(
-                doWhileNotNullOrException {
-                    driver.findElement(By.id("searchPopSttnZoneSgg"))
-                }
-            ).selectByValue(incheonMap[obj.adminName])
+//            Select(
+//                doWhileNotNullOrException {
+//                    driver.findElement(By.id("searchPopSttnZoneSgg"))
+//                }
+//            ).selectByValue(incheonMap[obj.adminName])
 
-            sleep(1000L)
+//            sleep(1000L)
 
             // 값 넣기
             val searchBar =
@@ -196,17 +204,17 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
 
             // 검색
             val searchButton = doWhileNotNullOrException {
-                driver.findElements(By.className("btn_sch_in")).filter { it.text.equals("검색") }[1]
+                driver.findElements(By.className("btn_sch_in")).firstOrNull { it.text.equals("검색") }
             }
             searchButton.click()
 
             sleep(1000L)
 
             // 체크
-            val popBox = doWhileNotNullOrException(20) {
+            val popBox = doWhileNotNullOrException(10) {
                 driver.findElements(By.className("pop_box")).firstOrNull()
             }
-            val checkBox = doWhileNotNullOrException(20) {
+            val checkBox = doWhileNotNullOrException(10) {
                 popBox.findElements(By.className("check")).firstOrNull()
             }
             checkBox.click()
@@ -240,7 +248,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, private val head
             val js = driver as JavascriptExecutor
             try {
                 js.executeAsyncScript("rgrstyExcelExport('10')")
-            } catch(ex: Exception) {
+            } catch (ex: Exception) {
                 log.info("timeout")
 //                    log.error(ex.message, ex)
             }

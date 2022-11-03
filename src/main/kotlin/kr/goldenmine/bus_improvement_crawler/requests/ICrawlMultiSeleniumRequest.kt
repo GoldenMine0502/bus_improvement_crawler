@@ -19,6 +19,7 @@ interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
     fun doCrawlOne(session: Session, driver: WebDriver, obj: T)
     fun init(session: Session)
 
+
     override fun crawlAll(session: Session) {
         init(session)
 
@@ -35,7 +36,9 @@ interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
         val keyFailed = Object()
 
         while(queue.isNotEmpty()) {
+            var index = 0
             val threads = drivers.map { driver ->
+                index++
                 Thread {
                     while(true) {
                         var data: T? = null
@@ -46,6 +49,7 @@ interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
                         }
                         if(data == null) break
                         try {
+//                            log.info("Thread $index: ${data.toString()}")
                             doCrawlOne(session, driver, data!!)
                         } catch(ex: Exception) {
                             log.error(ex.message, ex)

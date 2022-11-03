@@ -49,7 +49,7 @@ fun main() {
 
     val session = sessionFactory.openSession()
 //    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
-    RequestBusCardSeleniumMulti(16).crawlAll(session)
+    RequestBusCardSeleniumMulti(12, 16, false).crawlAll(session)
 //    toCrawl.forEach {
 //        log.info("${it.getFolder().path} started")
 //        try {
