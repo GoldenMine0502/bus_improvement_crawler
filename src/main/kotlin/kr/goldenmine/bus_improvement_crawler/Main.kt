@@ -37,28 +37,29 @@ fun main() {
     reader.close()
 
     val toCrawl = listOf(
-//        RequestBus(keys.requestBusCardKey, LOCATION_ID_INCHEON),
 //        RequestTraffic(keys.requestBusTrafficKey),
-//        RequestBusStop(keys.requestBusStopKey),
-//        RequestKakao(keys.requestKakaoKey),
-        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey)
+        RequestBusStop(keys.requestBusStopKey),
+        RequestKakao(keys.requestKakaoKey),
+        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
+        RequestBusCardSeleniumMulti(8, 16, false)
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
     val sessionFactory = MetadataSources(registry).buildMetadata().buildSessionFactory()
 
     val session = sessionFactory.openSession()
-//    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).crawlAll(session)
-    RequestBusCardSeleniumMulti(12, 16, false).crawlAll(session)
-//    toCrawl.forEach {
-//        log.info("${it.getFolder().path} started")
-//        try {
-//            it.progress(sessionFactory)
-//        } catch (ex: Exception) {
-//            ex.printStackTrace()
-//        }
-//        log.info("${it.getFolder().path} finished")
-//    }
+//    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).saveAll(session)
+//    RequestBusCardSeleniumMulti(8, 16, false).saveAll(session)
+
+    toCrawl.forEach {
+        log.info("${it.getFolder().path} started")
+        try {
+            it.progress(sessionFactory)
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        log.info("${it.getFolder().path} finished")
+    }
 
     session.close()
 }

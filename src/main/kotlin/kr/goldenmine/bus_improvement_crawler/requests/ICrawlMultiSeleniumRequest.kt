@@ -19,7 +19,6 @@ interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
     fun doCrawlOne(session: Session, driver: WebDriver, obj: T)
     fun init(session: Session)
 
-
     override fun crawlAll(session: Session) {
         init(session)
 
@@ -71,6 +70,12 @@ interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
 
         failed.forEach {
             log.info(it.toString())
+        }
+
+        log.info("failed ${failed.size}")
+
+        drivers.forEach {
+            it.quit()
         }
     }
 }

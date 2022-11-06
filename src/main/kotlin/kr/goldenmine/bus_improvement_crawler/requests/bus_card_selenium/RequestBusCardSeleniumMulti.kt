@@ -2,6 +2,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium
 
 import com.opencsv.CSVReader
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlMultiSeleniumRequest
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.database.BusTrafficInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopStationInfo
 import org.hibernate.Session
 import org.openqa.selenium.Alert
@@ -15,11 +16,20 @@ import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
 import java.lang.Thread.sleep
 import java.time.Duration
+import java.util.*
 
-class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSize: Int = threadSize, private val headless: Boolean = true) :
+
+class RequestBusCardSeleniumMulti(
+    override val threadSize: Int,
+    val maxThreadSize: Int = threadSize,
+    private val headless: Boolean = true
+) :
     ICrawlMultiSeleniumRequest<BusStopStationInfo> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardSeleniumMulti::class.java)
 
@@ -43,9 +53,9 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSiz
     )
 
     private val monthValue = "8" // 9월
-    private val dateFromText = "19"
-    private val middleText = "19"
-    private val dateToText = "21"
+//    private val dateFromText = "19"
+//    private val middleText = "19"
+//    private val dateToText = "21"
 
     override fun createNewClient(index: Int): WebDriver {
         val innerFolder = File(getFolder(), index.toString())
@@ -78,12 +88,18 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSiz
             }
         }
 
-        return list
+        val returnList = list
             .asSequence()
             .filterNotNull()
             .filter { !exclude.contains(it.shortId) }
             .filter { incheonList.contains(it.adminName) }
             .toList()
+
+        log.info("total files: ${list.size}")
+        log.info("downloaded files: ${exclude.size}")
+        log.info("files to download: ${returnList.size}")
+
+        return returnList
     }
 
     override fun init(session: Session) {
@@ -92,6 +108,7 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSiz
 
             innerFolder.listFiles()?.filterNotNull()?.forEach { src ->
                 try {
+                    // 일단 short id를 읽을 수 있는 지 확인
                     val reader = CSVReader(src.bufferedReader())
                     val data: String
                     val dest: File
@@ -107,12 +124,22 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSiz
                             println("Renaming ${dest.name} succeed")
                         }
                     }
+
+                    // 데이터 전체 보존 되어있는 지 확인
+                    val reader2 = CSVReader(src.bufferedReader())
+                    reader2.use {
+                        reader2.skip(1)
+                        reader2.readAll().forEach { line ->
+                            val busTrafficInfo = makeBusTrafficInfo(0, line)
+                        }
+                    }
                 } catch (ex: Exception) {
-                    log.error(src.readText())
+                    log.error(if(src.exists()) src.readText() else "null")
                     log.error(ex.message, ex)
                     log.error(src.path)
                     src.delete()
                 }
+
             }
         }
     }
@@ -291,8 +318,103 @@ class RequestBusCardSeleniumMulti(override val threadSize: Int, val maxThreadSiz
         sleep(1000L)
     }
 
-    override fun saveAll(session: Session) {
+    fun makeBusTrafficInfo(id: Int, line: Array<String>): BusTrafficInfo {
+        val busTrafficInfo = BusTrafficInfo(
+            id = id,
+            shortId = line[1].toInt(),
+            date = line[4],
+            userType = line[5],
+            routeNo = line[2],
 
+            time04On = line[6].toInt(),
+            time04Off = line[7].toInt(),
+
+            time05On = line[8].toInt(),
+            time05Off = line[9].toInt(),
+            time06On = line[10].toInt(),
+            time06Off = line[11].toInt(),
+            time07On = line[12].toInt(),
+            time07Off = line[13].toInt(),
+            time08On = line[14].toInt(),
+            time08Off = line[15].toInt(),
+
+            time09On = line[16].toInt(),
+            time09Off = line[17].toInt(),
+            time10On = line[18].toInt(),
+            time10Off = line[19].toInt(),
+            time11On = line[20].toInt(),
+            time11Off = line[21].toInt(),
+            time12On = line[22].toInt(),
+            time12Off = line[23].toInt(),
+
+            time13On = line[24].toInt(),
+            time13Off = line[25].toInt(),
+            time14On = line[26].toInt(),
+            time14Off = line[27].toInt(),
+            time15On = line[28].toInt(),
+            time15Off = line[29].toInt(),
+            time16On = line[30].toInt(),
+            time16Off = line[31].toInt(),
+
+            time17On = line[32].toInt(),
+            time17Off = line[33].toInt(),
+            time18On = line[34].toInt(),
+            time18Off = line[35].toInt(),
+            time19On = line[36].toInt(),
+            time19Off = line[37].toInt(),
+            time20On = line[38].toInt(),
+            time20Off = line[39].toInt(),
+
+            time21On = line[40].toInt(),
+            time21Off = line[41].toInt(),
+            time22On = line[42].toInt(),
+            time22Off = line[43].toInt(),
+            time23On = line[44].toInt(),
+            time23Off = line[45].toInt(),
+            time00On = line[46].toInt(),
+            time00Off = line[47].toInt(),
+
+            time01On = line[48].toInt(),
+            time01Off = line[49].toInt(),
+            time02On = line[50].toInt(),
+            time02Off = line[51].toInt(),
+            time03On = line[52].toInt(),
+            time03Off = line[53].toInt(),
+        )
+
+        return busTrafficInfo
     }
 
+    override fun saveAll(session: Session) {
+        init(session)
+        val tx = session.beginTransaction()
+
+        var id = 0
+        getFolder().listFiles()?.forEach { folder ->
+            folder.listFiles()?.forEach { file ->
+                try {
+                    val fileInputStream = FileInputStream(file)
+                    val inputStreamReader = InputStreamReader(fileInputStream, "MS949")
+                    val bufferedReader = BufferedReader(inputStreamReader)
+
+                    val reader = CSVReader(bufferedReader)
+                    reader.use {
+                        log.info("${file.name} ${folder.name}")
+                        reader.skip(1)
+                        reader.readAll().forEach { line ->
+//                            log.info(Arrays.toString(line))
+
+                            val busTrafficInfo = makeBusTrafficInfo(id++, line)
+
+                            session.save(busTrafficInfo)
+                        }
+                    }
+                } catch(ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+
+        tx.commit()
+    }
 }
