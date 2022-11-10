@@ -45,11 +45,7 @@ class RequestBusStop(
             if (busTemp.contains(routeNo)) {
                 val response = service.getBusRouteNo(serviceKey, 1, perPage, routeNo).execute().body()
 
-                log.info(
-                    "${response?.msgBody?.itemList?.size} ${
-                        response?.msgBody?.itemList?.map { it.ROUTENO }?.joinToString()
-                    }"
-                )
+                log.info("${response?.msgBody?.itemList?.size} ${response?.msgBody?.itemList?.map { it.ROUTENO }?.joinToString()}")
                 response?.msgBody?.itemList?.forEach {
                     list.add(it)
                     busTemp.remove(it.ROUTENO)

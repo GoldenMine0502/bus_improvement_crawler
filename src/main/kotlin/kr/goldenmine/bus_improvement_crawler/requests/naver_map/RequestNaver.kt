@@ -154,7 +154,7 @@ class RequestNaver(
 
                     if(from.id != null && to.id != null) {
                         response?.route?.traoptimal?.get(0)?.path?.forEach {
-                            val pathInfo = BusPathInfo(totalId++, from.id, to.id, index, it[0], it[1])
+                            val pathInfo = BusPathInfo(totalId++, busStopInfo.routeNo, from.id, to.id, index, it[0], it[1])
 
                             session.save(pathInfo)
                         }

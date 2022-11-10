@@ -38,9 +38,9 @@ fun main() {
 
     val toCrawl = listOf(
 //        RequestTraffic(keys.requestBusTrafficKey),
-        RequestBusStop(keys.requestBusStopKey),
-        RequestKakao(keys.requestKakaoKey),
-        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
+//        RequestBusStop(keys.requestBusStopKey),
+//        RequestKakao(keys.requestKakaoKey),
+//        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
         RequestBusCardSeleniumMulti(8, 16, false)
     )
 

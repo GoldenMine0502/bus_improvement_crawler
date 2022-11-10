@@ -111,13 +111,19 @@ class RequestBusCardSeleniumMulti(
                     // 일단 short id를 읽을 수 있는 지 확인
                     val reader = CSVReader(src.bufferedReader())
                     val data: String
+                    val data2: String
                     val dest: File
                     reader.use {
                         reader.skip(1)
-                        data = reader.readNext()[1]
+                        val line = reader.readNext()
+                        data = line[1]
+                        data2 = line[4]
                         dest = File(getFolder(), "$index/${data}.csv")
                     }
 
+                    if(data2.contains("2022-10")) { // 10월 데이터 제거
+                        throw RuntimeException()
+                    }
                     if (!src.name.startsWith(data)) {
                         val success = src.renameTo(dest)
                         if (success) {
