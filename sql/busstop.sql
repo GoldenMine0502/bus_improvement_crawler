@@ -39,7 +39,7 @@ CREATE TABLE bus_info(
     max_allocation_gap INT(11),
     min_allocation_gap INT(11),
     route_type INT(11),
-    turn_bus_stop_id VARCHAR(20)
+    turn_bus_stop_id INT(11)
 );
 
 CREATE TABLE bus_through_info(
@@ -160,7 +160,7 @@ SELECT * FROM bus_stop_station_info WHERE admin_name = '연수구';
 
 SELECT through.route_id, through.bus_stop_station_id, through.bus_stop_sequence, station.pos_x, station.pos_y FROM bus_through_info through INNER JOIN bus_stop_station_info station ON through.route_id = station.id; 
 
-ALTER TABLE bus_info MODIFY COLUMN dest_bus_stop_id INT(11);
+ALTER TABLE bus_info MODIFY COLUMN turn_bus_stop_id INT(11);
 
 # safe mode 끄기
 SET SQL_SAFE_UPDATES = 0;

@@ -63,7 +63,7 @@ class BusInfo(
 
     @SerializedName("turn_bus_stop_id")
     @Column(name = "turn_bus_stop_id")
-    val turnBusStopId: String? = null,
+    val turnBusStopId: Int? = null,
 ) {
     override fun hashCode(): Int {
         return routeId.toString().toInt()
