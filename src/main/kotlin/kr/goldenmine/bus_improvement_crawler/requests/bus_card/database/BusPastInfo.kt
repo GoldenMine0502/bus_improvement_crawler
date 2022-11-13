@@ -8,7 +8,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "bus_stop")
 @SequenceGenerator(name = "bus_stop_sequence_generator", sequenceName = "bus_stop_sequence")
-class BusInfo {
+class BusPastInfo {
     @Id //    @GeneratedValue(strategy = GenerationType.AUTO)
     @SerializedName("id")
     @Column(name = "id")

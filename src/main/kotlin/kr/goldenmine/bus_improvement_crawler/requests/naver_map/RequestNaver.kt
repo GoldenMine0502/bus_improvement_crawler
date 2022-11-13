@@ -3,7 +3,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.naver_map
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopStationInfo
 import kr.goldenmine.bus_improvement_crawler.requests.naver_map.database.BusPathInfo
 import kr.goldenmine.bus_improvement_crawler.requests.naver_map.request.PathResponse
@@ -38,8 +38,8 @@ class RequestNaver(
 
     override fun getFolder() = File("naver")
 
-    private fun executeBusQuery(session: Session): List<BusStopInfo> {
-        val busInfoList = (session.createQuery("FROM BusStopInfo").list() as List<BusStopInfo?>).filterNotNull()
+    private fun executeBusQuery(session: Session): List<BusInfo> {
+        val busInfoList = (session.createQuery("FROM BusStopInfo").list() as List<BusInfo?>).filterNotNull()
 
         return busInfoList
     }

@@ -19,7 +19,7 @@ import javax.persistence.*
 //@Data
 @Entity
 @Table(name = "bus_info")
-class BusStopInfo(
+class BusInfo(
     @Id
     @SerializedName("route_id")
     @Column(name = "route_id")
@@ -31,11 +31,11 @@ class BusStopInfo(
 
     @SerializedName("route_no")
     @Column(name = "route_no")
-    val routeNo: String? = null,
+    val routeNo: Int? = null,
 
     @SerializedName("origin_bus_stop_id")
     @Column(name = "origin_bus_stop_id")
-    val originBusStopId: String? = null,
+    val originBusStopId: Int? = null,
 
     @SerializedName("dest_bus_stop_id")
     @Column(name = "dest_bus_stop_id")
@@ -70,7 +70,7 @@ class BusStopInfo(
     }
 
     override fun equals(other: Any?): Boolean {
-        if(other is BusStopInfo) {
+        if(other is BusInfo) {
             return routeId == other.routeId
         }
 

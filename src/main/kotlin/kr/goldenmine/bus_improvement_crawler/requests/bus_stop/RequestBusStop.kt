@@ -3,7 +3,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_stop
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopStationInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusThroughInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.request.BusStopRouteResponseItem
@@ -127,7 +127,7 @@ class RequestBusStop(
         map.distinctBy { it.first }
             .map { it.first }
             .forEach { t ->
-                val busStopInfo = BusStopInfo(
+                val busInfo = BusInfo(
                     t.ROUTEID, t.ROUTELEN, t.ROUTENO,
                     t.ORIGIN_BSTOPID, t.DEST_BSTOPID,
                     t.FBUS_DEPHMS, t.LBUS_DEPHMS,
@@ -135,7 +135,7 @@ class RequestBusStop(
                     t.ROUTETPCD, t.TURN_BSTOPID
                 )
 
-                session.save(busStopInfo)
+                session.save(busInfo)
             }
 
         map.distinctBy { it.second.BSTOPID }

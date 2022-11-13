@@ -3,7 +3,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_card
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlRetrofitRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card.database.BusInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card.database.BusPastInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_card.request.BusDetailResponse
 import kr.goldenmine.bus_improvement_crawler.util.buses
 import org.hibernate.Session
@@ -53,13 +53,13 @@ class RequestBus(
                         if (detail.results.isEmpty())
                             failed.add(busName)
                         detail.results.forEach {
-                            val busInfo =
-                                BusInfo()
-                            busInfo.routeId = it.routeId
-                            busInfo.routeNo = it.routeNo
-                            busInfo.routeNameStartToFinish = it.routeNameStartToFinish
-                            busInfo.busStopId = it.busStopId
-                            busInfo.busStopName = it.busStopName
+                            val busPastInfo =
+                                BusPastInfo()
+                            busPastInfo.routeId = it.routeId
+                            busPastInfo.routeNo = it.routeNo
+                            busPastInfo.routeNameStartToFinish = it.routeNameStartToFinish
+                            busPastInfo.busStopId = it.busStopId
+                            busPastInfo.busStopName = it.busStopName
                         }
 
                         val file = File(getFolder(), "bus$busName.json")
@@ -99,16 +99,16 @@ class RequestBus(
 
                 println(busDetail.count)
                 busDetail.results.forEach {
-                    val busInfo =
-                        BusInfo()
-                    busInfo.routeId = it.routeId
-                    busInfo.routeNo = it.routeNo
-                    busInfo.routeNameStartToFinish = it.routeNameStartToFinish
-                    busInfo.busStopId = it.busStopId
-                    busInfo.busStopIndex = it.busStopIndex
-                    busInfo.busStopName = it.busStopName
+                    val busPastInfo =
+                        BusPastInfo()
+                    busPastInfo.routeId = it.routeId
+                    busPastInfo.routeNo = it.routeNo
+                    busPastInfo.routeNameStartToFinish = it.routeNameStartToFinish
+                    busPastInfo.busStopId = it.busStopId
+                    busPastInfo.busStopIndex = it.busStopIndex
+                    busPastInfo.busStopName = it.busStopName
 
-                    session.save(busInfo)
+                    session.save(busPastInfo)
                 }
 
             } catch(ex: Exception) {

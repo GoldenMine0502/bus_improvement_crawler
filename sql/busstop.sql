@@ -1,5 +1,6 @@
 CREATE DATABASE bus_improvement;
 
+USE sys;
 USE bus_improvement;
 
 # [BusDetailResponseSpec(
@@ -16,6 +17,7 @@ DROP TABLE hibernate_sequence;
 DROP TABLE bus_through_info;
 DROP TABLE bus_stop_station_info;
 DROP TABLE bus_path_info;
+DROP TABLE bus_traffic_info;
 
 CREATE TABLE bus_stop_station_info(
 	id INT(11) NOT NULL PRIMARY KEY,
@@ -30,8 +32,8 @@ CREATE TABLE bus_info(
 	route_id VARCHAR(20) NOT NULL PRIMARY KEY,
     route_len INT(11),
     route_no VARCHAR(20),
-	origin_bus_stop_id VARCHAR(20),
-    dest_bus_stop_id VARCHAR(20),
+	origin_bus_stop_id INT(11),
+    dest_bus_stop_id INT(11),
     bus_start_time VARCHAR(10),
     bus_finish_time VARCHAR(10),
     max_allocation_gap INT(11),
@@ -49,6 +51,7 @@ CREATE TABLE bus_through_info(
 
 CREATE TABLE bus_path_info(
 	id INT(11) NOT NULL PRIMARY KEY,
+    route_no VARCHAR(20), 
     from_id INT(11),
     to_id INT(11),
     sequence INT(11),
@@ -119,14 +122,16 @@ CREATE TABLE hibernate_sequence(
 INSERT INTO hibernate_sequence (next_val) VALUES (1);
 
 SELECT * FROM bus_info;
+SELECT * FROM bus_traffic_info;
 SELECT * FROM bus_stop_station_info;
 SELECT * FROM bus_through_info;
 SELECT * FROM bus_info ORDER BY route_no ASC;
-SELECT * FROM bus_path_info;
+SELECT * FROM bus_path_info WHERE route_no = '58' AND sequence = 0;
 SELECT * FROM hibernate_sequence;
 SELECT COUNT(*) FROM bus_info;
 SELECT COUNT(*) FROM bus_path_info;
 SELECT COUNT(*) FROM bus_stop_station_info;
+SELECT COUNT(*) FROM bus_traffic_info;
 SELECT * FROM bus_stop_station_info WHERE short_id = '35708';
 
 SELECT * FROM bus_info WHERE route_no = '58';
@@ -152,6 +157,10 @@ SELECT bus_stop_station_id FROM bus_through_info WHERE route_id IN (SELECT route
 
 SELECT * FROM bus_stop_station_info;
 SELECT * FROM bus_stop_station_info WHERE admin_name = '연수구';
+
+SELECT through.route_id, through.bus_stop_station_id, through.bus_stop_sequence, station.pos_x, station.pos_y FROM bus_through_info through INNER JOIN bus_stop_station_info station ON through.route_id = station.id; 
+
+ALTER TABLE bus_info MODIFY COLUMN dest_bus_stop_id INT(11);
 
 # safe mode 끄기
 SET SQL_SAFE_UPDATES = 0;
