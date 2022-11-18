@@ -8,7 +8,7 @@ import javax.persistence.Table
 
 @Entity
 @Table(name = "bus_traffic_info")
-class BusTrafficInfo(
+class BusTrafficBusStopInfo(
     @Id
     @SerializedName("id")
     @Column(name = "id")

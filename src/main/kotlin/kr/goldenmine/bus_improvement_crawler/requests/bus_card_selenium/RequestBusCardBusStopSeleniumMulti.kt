@@ -2,7 +2,7 @@ package kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium
 
 import com.opencsv.CSVReader
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlMultiSeleniumRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.database.BusTrafficInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.database.BusTrafficBusStopInfo
 import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusStopStationInfo
 import org.hibernate.Session
 import org.openqa.selenium.Alert
@@ -25,13 +25,13 @@ import java.time.Duration
 import java.util.*
 
 
-class RequestBusCardSeleniumMulti(
+class RequestBusCardBusStopSeleniumMulti(
     override val threadSize: Int,
     val maxThreadSize: Int = threadSize,
     private val headless: Boolean = true
 ) :
     ICrawlMultiSeleniumRequest<BusStopStationInfo> {
-    private val log: Logger = LoggerFactory.getLogger(RequestBusCardSeleniumMulti::class.java)
+    private val log: Logger = LoggerFactory.getLogger(RequestBusCardBusStopSeleniumMulti::class.java)
 
     private val incheonList = setOf(
         "강화군", "계양구", "남동구", "동구", "미추홀구",
@@ -102,57 +102,59 @@ class RequestBusCardSeleniumMulti(
         return returnList
     }
 
-    override fun init(session: Session) {
-        repeat(maxThreadSize) { index ->
-            val innerFolder = File(getFolder(), index.toString())
+    override fun init(session: Session, index: Int) {
+        if(index == 0) {
+            repeat(maxThreadSize) { indexFromMax ->
+                val innerFolder = File(getFolder(), indexFromMax.toString())
 
-            innerFolder.listFiles()?.filterNotNull()?.forEach { src ->
-                try {
-                    // 일단 short id를 읽을 수 있는 지 확인
-                    val reader = CSVReader(src.bufferedReader())
-                    val data: String
-                    val data2: String
-                    val dest: File
-                    reader.use {
-                        reader.skip(1)
-                        val line = reader.readNext()
-                        data = line[1]
-                        data2 = line[4]
-                        dest = File(getFolder(), "$index/${data}.csv")
-                    }
-
-                    if(data2.contains("2022-10")) { // 10월 데이터 제거
-                        throw RuntimeException()
-                    }
-                    if (!src.name.startsWith(data)) {
-                        val success = src.renameTo(dest)
-                        if (success) {
-                            println("Renaming ${dest.name} succeed")
+                innerFolder.listFiles()?.filterNotNull()?.forEach { src ->
+                    try {
+                        // 일단 short id를 읽을 수 있는 지 확인
+                        val reader = CSVReader(src.bufferedReader())
+                        val data: String
+                        val data2: String
+                        val dest: File
+                        reader.use {
+                            reader.skip(1)
+                            val line = reader.readNext()
+                            data = line[1]
+                            data2 = line[4]
+                            dest = File(getFolder(), "$indexFromMax/${data}.csv")
                         }
+
+                        if (data2.contains("2022-10")) { // 10월 데이터 제거
+                            throw RuntimeException()
+                        }
+                        if (!src.name.startsWith(data)) {
+                            val success = src.renameTo(dest)
+                            if (success) {
+                                println("Renaming ${dest.name} succeed")
+                            }
+                        }
+
+                        // 데이터 전체 보존 되어있는 지 확인
+                        val reader2 = CSVReader(src.bufferedReader())
+                        reader2.use {
+                            reader2.skip(1)
+                            reader2.readAll().forEach { line ->
+                                val busTrafficInfo = makeBusTrafficInfo(0, line)
+                            }
+                        }
+                    } catch (ex: Exception) {
+                        log.error(if (src.exists()) src.readText() else "null")
+                        log.error(ex.message, ex)
+                        log.error(src.path)
+                        src.delete()
                     }
 
-                    // 데이터 전체 보존 되어있는 지 확인
-                    val reader2 = CSVReader(src.bufferedReader())
-                    reader2.use {
-                        reader2.skip(1)
-                        reader2.readAll().forEach { line ->
-                            val busTrafficInfo = makeBusTrafficInfo(0, line)
-                        }
-                    }
-                } catch (ex: Exception) {
-                    log.error(if(src.exists()) src.readText() else "null")
-                    log.error(ex.message, ex)
-                    log.error(src.path)
-                    src.delete()
                 }
-
             }
         }
     }
 
     override fun getFolder(): File = File("bus_card_selenium_multi")
 
-    override fun doCrawlOne(session: Session, driver: WebDriver, obj: BusStopStationInfo) {
+    override fun doCrawlOne(session: Session, driver: WebDriver, index: Int, obj: BusStopStationInfo) {
         if (obj.shortId != null) {
             log.info(obj.shortId.toString())
             driver.get("https://stcis.go.kr/pivotIndi/wpsPivotIndicator.do?siteGb=P&indiClss=IC03")
@@ -324,8 +326,8 @@ class RequestBusCardSeleniumMulti(
         sleep(1000L)
     }
 
-    fun makeBusTrafficInfo(id: Int, line: Array<String>): BusTrafficInfo {
-        val busTrafficInfo = BusTrafficInfo(
+    fun makeBusTrafficInfo(id: Int, line: Array<String>): BusTrafficBusStopInfo {
+        val busTrafficBusStopInfo = BusTrafficBusStopInfo(
             id = id,
             shortId = line[1].toInt(),
             date = line[4],
@@ -388,11 +390,11 @@ class RequestBusCardSeleniumMulti(
             time03Off = line[53].toInt(),
         )
 
-        return busTrafficInfo
+        return busTrafficBusStopInfo
     }
 
     override fun saveAll(session: Session) {
-        init(session)
+        init(session, 0)
         val tx = session.beginTransaction()
 
         var id = 0

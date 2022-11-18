@@ -3,12 +3,8 @@ package kr.goldenmine.bus_improvement_crawler
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.bonigarcia.wdm.WebDriverManager
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardSelenium
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardSeleniumMulti
-import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
-import kr.goldenmine.bus_improvement_crawler.requests.bus_traffic.RequestTraffic
-import kr.goldenmine.bus_improvement_crawler.requests.kakao_map.RequestKakao
-import kr.goldenmine.bus_improvement_crawler.requests.naver_map.RequestNaver
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusStopSeleniumMulti
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusUsageSeleniumMulti
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.LoggerFactory
@@ -41,7 +37,8 @@ fun main() {
 //        RequestBusStop(keys.requestBusStopKey),
 //        RequestKakao(keys.requestKakaoKey),
 //        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
-        RequestBusCardSeleniumMulti(8, 16, false)
+//        RequestBusCardBusStopSeleniumMulti(8, 16, false),
+        RequestBusCardBusUsageSeleniumMulti(8, 16, false),
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
@@ -49,8 +46,7 @@ fun main() {
 
     val session = sessionFactory.openSession()
 //    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).saveAll(session)
-    RequestBusCardSeleniumMulti(8, 16, false).saveAll(session)
-
+//    RequestBusCardBusStopSeleniumMulti(8, 16, false).saveAll(session)
     toCrawl.forEach {
         log.info("${it.getFolder().path} started")
         try {

@@ -31,7 +31,7 @@ class BusInfo(
 
     @SerializedName("route_no")
     @Column(name = "route_no")
-    val routeNo: Int? = null,
+    val routeNo: String? = null,
 
     @SerializedName("origin_bus_stop_id")
     @Column(name = "origin_bus_stop_id")
@@ -39,7 +39,7 @@ class BusInfo(
 
     @SerializedName("dest_bus_stop_id")
     @Column(name = "dest_bus_stop_id")
-    val destBusStopId: String? = null,
+    val destBusStopId: Int? = null,
 
     @SerializedName("bus_start_time")
     @Column(name = "bus_start_time")

@@ -19,8 +19,8 @@ import java.lang.Thread.sleep
 import java.time.Duration
 
 
-class RequestBusCardSelenium: ICrawlSingleSeleniumRequest {
-    private val log: Logger = LoggerFactory.getLogger(RequestBusCardSelenium::class.java)
+class RequestBusCardBusStopSelenium: ICrawlSingleSeleniumRequest {
+    private val log: Logger = LoggerFactory.getLogger(RequestBusCardBusStopSelenium::class.java)
 
     override val driver: WebDriver
         get() {

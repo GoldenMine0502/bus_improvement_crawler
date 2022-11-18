@@ -51,7 +51,7 @@ data class BusStopRouteResponseItem(
 
     @SerializedName("destBusStopId")
     @Column(name="dest_bus_stop_id")
-    var DEST_BSTOPID: String? = null,
+    var DEST_BSTOPID: Int? = null,
 
     @SerializedName("destBusStopName")
     @Column(name="dest_bus_stop_name")
@@ -75,7 +75,7 @@ data class BusStopRouteResponseItem(
 
     @SerializedName("originBusStopId")
     @Column(name="origin_bus_stop_id")
-    var ORIGIN_BSTOPID: String? = null,
+    var ORIGIN_BSTOPID: Int? = null,
 
     @SerializedName("originBusStopName")
     @Column(name="origin_bus_stop_name")
@@ -99,7 +99,7 @@ data class BusStopRouteResponseItem(
 
     @SerializedName("turnBusStopId")
     @Column(name="turn_bus_stop_id")
-    var TURN_BSTOPID: String? = null,
+    var TURN_BSTOPID: Int? = null,
 
     @SerializedName("turnBusStopName")
     @Column(name="turn_bus_stop_name")

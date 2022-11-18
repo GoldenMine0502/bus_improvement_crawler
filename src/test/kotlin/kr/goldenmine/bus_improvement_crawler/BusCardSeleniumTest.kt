@@ -1,6 +1,6 @@
 package kr.goldenmine.bus_improvement_crawler
 
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardSelenium
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusStopSelenium
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.junit.jupiter.api.Test
@@ -14,7 +14,7 @@ class BusCardSeleniumTest { //
 
         val session = sessionFactory.openSession()
 
-        val request = RequestBusCardSelenium()
+        val request = RequestBusCardBusStopSelenium()
         request.crawlAll(session)
     } // robots.txt 체크 API 제한
 }
