@@ -138,7 +138,7 @@ class RequestBusCardBusUsageSeleniumMulti(
         val monthSelectUIElement = doWhileNotNullOrException {
             driver.findElements(By.className("ui-datepicker-month")).firstOrNull()
         }
-        Select(monthSelectUIElement).selectByValue(month.toString())
+        Select(monthSelectUIElement).selectByValue((month - 1).toString())
 
         Thread.sleep(2000L)
 

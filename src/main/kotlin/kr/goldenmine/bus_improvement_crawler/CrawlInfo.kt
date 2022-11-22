@@ -10,6 +10,4 @@ data class CrawlInfo(
     val year: Int,
     val month: Int,
     val totalPage: Int,
-) {
-    
-}
+)
