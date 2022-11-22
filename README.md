@@ -42,3 +42,4 @@
     </session-factory>
 </hibernate-configuration>
 ```
+connection.url, connection.username, connection.password 부분 맞게 수정하셔서 콘피그 불러오시면 됩니다.
