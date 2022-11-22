@@ -38,7 +38,7 @@ fun main() {
 //        RequestKakao(keys.requestKakaoKey),
 //        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
 //        RequestBusCardBusStopSeleniumMulti(8, 16, false),
-        RequestBusCardBusUsageSeleniumMulti(8, 16, false),
+        RequestBusCardBusUsageSeleniumMulti(5, 16, false),
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
@@ -46,7 +46,7 @@ fun main() {
 
     val session = sessionFactory.openSession()
 //    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).saveAll(session)
-//    RequestBusCardBusStopSeleniumMulti(8, 16, false).saveAll(session)
+//    RequestBusCardBusUsageSeleniumMulti(1, 16, false).saveAll(session)
     toCrawl.forEach {
         log.info("${it.getFolder().path} started")
         try {

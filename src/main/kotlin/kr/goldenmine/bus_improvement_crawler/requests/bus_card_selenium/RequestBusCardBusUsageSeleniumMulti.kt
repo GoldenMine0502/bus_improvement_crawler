@@ -1,7 +1,8 @@
 package kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium
 
+import com.opencsv.CSVReader
 import kr.goldenmine.bus_improvement_crawler.requests.ICrawlMultiSeleniumRequest
-import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.database.BusInfo
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.database.BusTrafficNodeInfo
 import org.hibernate.Session
 import org.openqa.selenium.Alert
 import org.openqa.selenium.By
@@ -14,9 +15,13 @@ import org.openqa.selenium.support.ui.Select
 import org.openqa.selenium.support.ui.WebDriverWait
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import java.io.BufferedReader
 import java.io.File
+import java.io.FileInputStream
+import java.io.InputStreamReader
 import java.time.Duration
-import java.util.HashMap
+import java.util.*
+import kotlin.collections.ArrayList
 
 class RequestBusCardBusUsageSeleniumMulti(
     override val threadSize: Int,
@@ -29,6 +34,7 @@ class RequestBusCardBusUsageSeleniumMulti(
     private val month = 8
     private val totalPage = 39
 
+    // = 초기화, == 비교연산자
     override fun createNewClient(index: Int): WebDriver {
         val innerFolder = File(getFolder(), index.toString())
         innerFolder.mkdirs()
@@ -84,16 +90,16 @@ class RequestBusCardBusUsageSeleniumMulti(
             it.delete()
             log.info("deleted ${it.name}")
         }
+
+
     }
 
     override fun getFolder(): File = File("bus_card_usage")
 
-    override fun saveAll(session: Session) {
-        TODO("Not yet implemented")
-    }
-
     override fun doCrawlOne(session: Session, driver: WebDriver, index: Int, crawlRange: CrawlRange) {
         init(session, index)
+
+        log.info("crawling $crawlRange")
 
         val js = driver as JavascriptExecutor
 
@@ -245,6 +251,7 @@ class RequestBusCardBusUsageSeleniumMulti(
                 val alert: Alert = driver.switchTo().alert()
                 alert.accept()
                 log.info("removed the alert")
+                break
             } catch(ex: Exception) {
                 log.info("no alert")
             }
@@ -292,6 +299,93 @@ class RequestBusCardBusUsageSeleniumMulti(
 
         Thread.sleep(1000L)
     }
+
+    override fun saveAll(session: Session) {
+//        repeat(maxThreadSize) {
+//            init(session, it)
+//        }
+
+        val tx = session.beginTransaction()
+
+        var id = 1
+
+        val folder = getFolder()
+
+        var errorCount = 0
+
+        for(i in 0 until maxThreadSize) {
+            val files = File(folder, i.toString())
+
+            files.listFiles()?.forEach { file ->
+                val fileInputStream = FileInputStream(file)
+                val inputStreamReader = InputStreamReader(fileInputStream, "MS949")
+                val bufferedReader = BufferedReader(inputStreamReader)
+
+                val reader = CSVReader(bufferedReader)
+                reader.use {
+//                    log.info("${file.name} ${folder.name}")
+                    reader.skip(1)
+                    reader.readAll().forEach { line ->
+                        try {
+//                            log.info("$i ${file.name} ${folder.name} ${Arrays.toString(line)}")
+
+                            val busTrafficInfo = makeBusTrafficInfo(id, line)
+                            id++
+                            session.save(busTrafficInfo)
+                        } catch(ex: Exception) {
+                            errorCount++
+                            ex.printStackTrace()
+                            file.delete()
+                            log.info("an error occured while saving a file. deleting $i ${file.name} ${folder.name} ${Arrays.toString(line)}. try saving again.")
+                        }
+                    }
+                }
+            }
+        }
+
+        if(errorCount == 0)
+            tx.commit()
+    }
+
+    // 노선,                      기종점,정류장순번,    정류장명,04시,05시,06시,07시,08시,09시,10시,11시,12시,13시,14시,15시,16시,17시,18시,19시,20시,21시,22시,23시,00시,01시,02시,03시,
+    //  0,                          1, 2,              3,  4,5,6,7, 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27
+    // 58,�۵���2������ - �۵���2������,21,�۵�ǳ�����̿�2����,  0,3,3,8,11,4, 4,14, 7, 7, 9,11,15,18,20,14,15,15,22,10, 0, 0, 0, 0,
+    private fun makeBusTrafficInfo(id: Int, line: Array<String>): BusTrafficNodeInfo {
+        return BusTrafficNodeInfo(
+            id = id,
+            routeNo = line[0],
+            sequence = line[2].toInt(),
+
+            time04 = line[4].toInt(),
+            time05 = line[5].toInt(),
+            time06 = line[6].toInt(),
+            time07 = line[7].toInt(),
+            time08 = line[8].toInt(),
+            time09 = line[9].toInt(),
+
+            time10 = line[10].toInt(),
+            time11 = line[11].toInt(),
+            time12 = line[12].toInt(),
+            time13 = line[13].toInt(),
+            time14 = line[14].toInt(),
+            time15 = line[15].toInt(),
+
+            time16 = line[16].toInt(),
+            time17 = line[17].toInt(),
+            time18 = line[18].toInt(),
+            time19 = line[19].toInt(),
+            time20 = line[20].toInt(),
+            time21 = line[21].toInt(),
+
+            time22 = line[22].toInt(),
+            time23 = line[23].toInt(),
+            time00 = line[24].toInt(),
+            time01 = line[25].toInt(),
+            time02 = line[26].toInt(),
+            time03 = line[27].toInt(),
+        )
+    }
+
 
     fun getFileCount(index: Int, fileName: String): Int {
         val innerFolder = File(getFolder(), index.toString())
