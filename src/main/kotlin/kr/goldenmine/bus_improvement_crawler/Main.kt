@@ -3,7 +3,6 @@ package kr.goldenmine.bus_improvement_crawler
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.bonigarcia.wdm.WebDriverManager
-import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusStopSeleniumMulti
 import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusUsageSeleniumMulti
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
@@ -15,7 +14,6 @@ import java.io.File
 패스워드는 대문자, 소문자, 숫자, 특수문자를 포함한 암호 길이 8자 이상으로 설정해야 연결이 제대로 된다였다!!!!
 (원인 파악 후 매우 허탈하였다!!!)
  */
-
 class Main
 
 const val LOCATION_ID_INCHEON = 28
@@ -25,11 +23,11 @@ fun main() {
 
     val log = LoggerFactory.getLogger(Main::class.java)
     val gson = Gson()
-    val reader = File("keys.json").reader()
+    val reader = File("crawlinfo.json").reader()
 
     // final + 변수타입
-    val type = object : TypeToken<Keys>() {}.type
-    val keys = gson.fromJson<Keys>(reader, type)
+    val type = object : TypeToken<CrawlInfo>() {}.type
+    val crawlInfo = gson.fromJson<CrawlInfo>(reader, type)
     reader.close()
 
     val toCrawl = listOf(
@@ -38,7 +36,7 @@ fun main() {
 //        RequestKakao(keys.requestKakaoKey),
 //        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
 //        RequestBusCardBusStopSeleniumMulti(8, 16, false),
-        RequestBusCardBusUsageSeleniumMulti(5, 16, false),
+        RequestBusCardBusUsageSeleniumMulti(5, 16, false, crawlInfo.month),
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()

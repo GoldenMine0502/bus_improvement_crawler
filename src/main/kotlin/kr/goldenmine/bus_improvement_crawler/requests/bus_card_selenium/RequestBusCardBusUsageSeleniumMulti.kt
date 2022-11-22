@@ -26,13 +26,15 @@ import kotlin.collections.ArrayList
 class RequestBusCardBusUsageSeleniumMulti(
     override val threadSize: Int,
     val maxThreadSize: Int = threadSize,
-    private val headless: Boolean = true
+    private val headless: Boolean = true,
+    private val month: Int,
+    private val totalPage: Int = 39,
 ) : ICrawlMultiSeleniumRequest<RequestBusCardBusUsageSeleniumMulti.CrawlRange> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardBusUsageSeleniumMulti::class.java)
 
     private val monthEndDateArray = intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-    private val month = 8
-    private val totalPage = 39
+//    private val month = 8
+//    private val totalPage = 39
 
     // = 초기화, == 비교연산자
     override fun createNewClient(index: Int): WebDriver {

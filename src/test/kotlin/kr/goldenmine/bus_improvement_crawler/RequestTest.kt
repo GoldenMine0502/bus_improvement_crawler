@@ -9,22 +9,22 @@ import java.io.File
 
 class RequestTest {
 
-    private val keys: Keys
+    private val crawlInfo: CrawlInfo
 
     init {
         // read keys
-        val type = object : TypeToken<Keys>() {}.type
+        val type = object : TypeToken<CrawlInfo>() {}.type
         val gson = Gson()
         val reader = File("keys.json").reader()
 
         // keys
-        keys = gson.fromJson(reader, type)
+        crawlInfo = gson.fromJson(reader, type)
     }
 
     @Test
     fun naverTest() {
         // request
-        val request = RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey)
+        val request = RequestNaver(crawlInfo.requestNaverKeyId, crawlInfo.requestNaverKey)
         val start = "126.66532891179264,37.366824870185276"
         val goal = "126.65791852187012,37.365799853663844"
 
@@ -35,7 +35,7 @@ class RequestTest {
 
     @Test
     fun kakaoTest() {
-        val request = RequestKakao(keys.requestKakaoKey)
+        val request = RequestKakao(crawlInfo.requestKakaoKey)
 
         val result = request.apiTest("모래방죽사거리")
         println(result)

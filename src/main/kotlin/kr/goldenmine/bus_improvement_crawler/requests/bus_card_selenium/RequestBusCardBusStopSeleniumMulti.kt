@@ -28,7 +28,8 @@ import java.util.*
 class RequestBusCardBusStopSeleniumMulti(
     override val threadSize: Int,
     val maxThreadSize: Int = threadSize,
-    private val headless: Boolean = true
+    private val headless: Boolean = true,
+    private val month: Int,
 ) :
     ICrawlMultiSeleniumRequest<BusStopStationInfo> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardBusStopSeleniumMulti::class.java)
@@ -52,7 +53,7 @@ class RequestBusCardBusStopSeleniumMulti(
         Pair("중구", "28110"),
     )
 
-    private val monthValue = "8" // 9월
+//    private val monthValue = "8" // 9월
 //    private val dateFromText = "19"
 //    private val middleText = "19"
 //    private val dateToText = "21"
@@ -189,7 +190,7 @@ class RequestBusCardBusStopSeleniumMulti(
             }
 
             // 9월 선택
-            Select(monthSelectUIElement).selectByValue(monthValue)
+            Select(monthSelectUIElement).selectByValue((month - 1).toString())
 
             sleep(1000L)
 
