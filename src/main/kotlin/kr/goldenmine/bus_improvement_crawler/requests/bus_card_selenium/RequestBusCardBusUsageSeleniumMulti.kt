@@ -54,7 +54,7 @@ class RequestBusCardBusUsageSeleniumMulti(
 
     override fun getAllData(session: Session): List<CrawlRange> {
         val range = 5
-        val monthDates = monthEndDateArray[month]
+        val monthDates = monthEndDateArray[month - 1]
 
         val list = ArrayList<CrawlRange>()
 
@@ -79,6 +79,7 @@ class RequestBusCardBusUsageSeleniumMulti(
         filteredList.forEach {
             log.info(it.toString())
         }
+
         log.info("crawling ${filteredList.size} of ${list.size} cases.")
 
         return filteredList
@@ -91,8 +92,6 @@ class RequestBusCardBusUsageSeleniumMulti(
             it.delete()
             log.info("deleted ${it.name}")
         }
-
-
     }
 
     override fun getFolder(): File = File("bus_card_usage")
