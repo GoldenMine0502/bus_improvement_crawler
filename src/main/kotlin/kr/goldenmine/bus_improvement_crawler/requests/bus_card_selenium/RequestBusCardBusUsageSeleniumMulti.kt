@@ -27,14 +27,13 @@ class RequestBusCardBusUsageSeleniumMulti(
     override val threadSize: Int,
     val maxThreadSize: Int = threadSize,
     private val headless: Boolean = true,
+    private val year: Int,
     private val month: Int,
     private val totalPage: Int = 39,
 ) : ICrawlMultiSeleniumRequest<RequestBusCardBusUsageSeleniumMulti.CrawlRange> {
     private val log: Logger = LoggerFactory.getLogger(RequestBusCardBusUsageSeleniumMulti::class.java)
 
     private val monthEndDateArray = intArrayOf(31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-//    private val month = 8
-//    private val totalPage = 39
 
     // = 초기화, == 비교연산자
     override fun createNewClient(index: Int): WebDriver {
@@ -71,7 +70,7 @@ class RequestBusCardBusUsageSeleniumMulti(
         }
 
         val filteredList = list.filter { crawlRange ->
-            val fileName = crawlRange.getFileName(month)
+            val fileName = crawlRange.fileName
             val count = (0 until maxThreadSize).sumOf { index -> getFileCount(index, fileName) }
 
             count == 0
@@ -293,7 +292,7 @@ class RequestBusCardBusUsageSeleniumMulti(
         val file = innerFolder.listFiles()?.firstOrNull {
             it.name.contains("정류장")
         }
-        val fileName = crawlRange.getFileName(month)
+        val fileName = crawlRange.fileName
         val count = getFileCount(index, fileName)
         val renameFile = File(innerFolder, "$fileName (${count + 1}).csv")
         file?.renameTo(renameFile)
@@ -303,16 +302,10 @@ class RequestBusCardBusUsageSeleniumMulti(
     }
 
     override fun saveAll(session: Session) {
-//        repeat(maxThreadSize) {
-//            init(session, it)
-//        }
-
+        val folder = getFolder()
         val tx = session.beginTransaction()
 
         var id = 1
-
-        val folder = getFolder()
-
         var errorCount = 0
 
         for(i in 0 until maxThreadSize) {
@@ -402,7 +395,7 @@ class RequestBusCardBusUsageSeleniumMulti(
         val start: Int,
         val end: Int,
     ) {
-        fun getFileName(month: Int) = "2022-${month + 1}-$date-$start-$end"
+        val fileName = "2022-$month-$date-$start-$end"
 
         override fun toString(): String {
             return "{date=$date, start=$start, end=$end}"

@@ -36,7 +36,7 @@ fun main() {
 //        RequestKakao(keys.requestKakaoKey),
 //        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
 //        RequestBusCardBusStopSeleniumMulti(8, 16, false),
-        RequestBusCardBusUsageSeleniumMulti(5, 16, false, crawlInfo.month),
+        RequestBusCardBusUsageSeleniumMulti(5, 16, false, crawlInfo.year, crawlInfo.month),
     )
 
     val registry = StandardServiceRegistryBuilder().configure(File("config/hibernate.cfg.xml")).build()
