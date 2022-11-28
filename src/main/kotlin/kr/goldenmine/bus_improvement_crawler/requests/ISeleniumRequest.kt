@@ -3,7 +3,7 @@ package kr.goldenmine.bus_improvement_crawler.requests
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
-interface ISeleniumRequest {
+interface ISeleniumRequest: ICrawlRequest {
     companion object {
         val log: Logger = LoggerFactory.getLogger(ISeleniumRequest::class.java)
     }

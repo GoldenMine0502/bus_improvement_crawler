@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory
 import java.lang.Thread.sleep
 import java.util.*
 
-interface ICrawlMultiSeleniumRequest<T>: ICrawlRequest, ISeleniumRequest {
+interface ICrawlMultiSeleniumRequest<T>: ISeleniumRequest {
     companion object {
         val log: Logger = LoggerFactory.getLogger(ISeleniumRequest::class.java)
     }

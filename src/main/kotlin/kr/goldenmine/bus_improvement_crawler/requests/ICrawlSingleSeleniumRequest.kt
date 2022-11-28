@@ -2,6 +2,6 @@ package kr.goldenmine.bus_improvement_crawler.requests
 
 import org.openqa.selenium.WebDriver
 
-interface ICrawlSingleSeleniumRequest: ICrawlRequest, ISeleniumRequest {
+interface ICrawlSingleSeleniumRequest: ISeleniumRequest {
     val driver: WebDriver
 }
