@@ -25,7 +25,7 @@ import kotlin.collections.ArrayList
 
 class RequestBusCardBusUsageSeleniumMulti(
     override val threadSize: Int,
-    val maxThreadSize: Int = threadSize,
+    private val maxThreadSize: Int = threadSize,
     private val headless: Boolean = true,
     private val year: Int,
     private val month: Int,

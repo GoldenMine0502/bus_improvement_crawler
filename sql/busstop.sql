@@ -18,6 +18,7 @@ DROP TABLE bus_through_info;
 DROP TABLE bus_stop_station_info;
 DROP TABLE bus_path_info;
 DROP TABLE bus_traffic_info;
+DROP TABLE bus_traffic_node_info;
 
 CREATE TABLE bus_stop_station_info(
 	id INT(11) NOT NULL PRIMARY KEY,
@@ -115,16 +116,55 @@ CREATE TABLE bus_traffic_info(
     time23_off INT(11)
 );
 
+CREATE TABLE bus_traffic_node_info(
+	id INT(11) NOT NULL PRIMARY KEY,
+    route_no VARCHAR(20),
+    sequence INT(11),
+    year INT(11),
+    month INT(11),
+    date INT(11),
+    time00 INT(11),
+    time01 INT(11),
+    time02 INT(11),
+    time03 INT(11),
+    time04 INT(11),
+    time05 INT(11),
+    time06 INT(11),
+    time07 INT(11),
+    time08 INT(11),
+    time09 INT(11),
+    time10 INT(11),
+    time11 INT(11),
+    time12 INT(11),
+    time13 INT(11),
+    time14 INT(11),
+    time15 INT(11),
+    time16 INT(11),
+    time17 INT(11),
+    time18 INT(11),
+    time19 INT(11),
+    time20 INT(11),
+    time21 INT(11),
+    time22 INT(11),
+    time23 INT(11),
+    time24 INT(11)
+);
+
 CREATE TABLE hibernate_sequence(
 	next_val INT(11) PRIMARY KEY
 );
 
 INSERT INTO hibernate_sequence (next_val) VALUES (1);
 
+DESC bus_info;
+DESC bus_traffic_info;
+DESC bus_traffic_node_info;
+
 SELECT * FROM bus_info;
 SELECT * FROM bus_traffic_info;
 SELECT * FROM bus_stop_station_info;
 SELECT * FROM bus_through_info;
+SELECT * FROM bus_traffic_node_info;
 SELECT * FROM bus_info ORDER BY route_no ASC;
 SELECT * FROM bus_path_info WHERE route_no = '58' AND sequence = 0;
 SELECT * FROM hibernate_sequence;
@@ -132,6 +172,7 @@ SELECT COUNT(*) FROM bus_info;
 SELECT COUNT(*) FROM bus_path_info;
 SELECT COUNT(*) FROM bus_stop_station_info;
 SELECT COUNT(*) FROM bus_traffic_info;
+SELECT COUNT(*) FROM bus_traffic_node_info;
 SELECT * FROM bus_stop_station_info WHERE short_id = '35708';
 
 SELECT * FROM bus_info WHERE route_no = '58';
@@ -141,7 +182,13 @@ SELECT * FROM bus_through_info B1 INNER JOIN bus_stop_station_info B2 ON B1.rout
 
 SELECT * FROM bus_stop_station_info WHERE id IN (
 	SELECT bus_stop_station_id FROM bus_through_info WHERE route_id IN (
-		SELECT route_id FROM bus_info WHERE route_no = '58'
+		SELECT route_id FROM bus_info WHERE route_no = '518'
+	) ORDER BY bus_stop_sequence ASC
+);
+
+SELECT * FROM bus_stop_station_info WHERE id IN (
+	SELECT bus_stop_station_id FROM bus_through_info WHERE route_id IN (
+		'165000029'
 	) ORDER BY bus_stop_sequence ASC
 );
 
@@ -152,6 +199,13 @@ SELECT * FROM bus_path_info WHERE from_id IN (
 		) ORDER BY bus_stop_sequence ASC
 	)
 );
+# 165000029
+SELECT * FROM bus_info WHERE route_no = '516';
+SELECT * FROM bus_info WHERE route_id = '165000078';
+SELECT * FROM bus_stop_station_info WHERE id = '163000503';
+SELECT * FROM bus_through_info WHERE route_id = '165000078';
+SELECT * FROM bus_traffic_node_info WHERE route_no = "58";
+SELECT * FROM bus_stop_station_info;
 
 SELECT bus_stop_station_id FROM bus_through_info WHERE route_id IN (SELECT route_id FROM bus_info WHERE route_no = '58') ORDER BY bus_stop_sequence ASC;
 
