@@ -20,6 +20,6 @@ interface ISeleniumRequest: ICrawlRequest {
             Thread.sleep(sleep)
         }
 
-        throw RuntimeException("null")
+        throw NullPointerException("null")
     }
 }
