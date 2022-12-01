@@ -3,7 +3,9 @@ package kr.goldenmine.bus_improvement_crawler
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import io.github.bonigarcia.wdm.WebDriverManager
+import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusStopSeleniumMulti
 import kr.goldenmine.bus_improvement_crawler.requests.bus_card_selenium.RequestBusCardBusUsageSeleniumMulti
+import kr.goldenmine.bus_improvement_crawler.requests.bus_stop.RequestBusStop
 import org.hibernate.boot.MetadataSources
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import org.slf4j.LoggerFactory
@@ -19,8 +21,11 @@ class Main
 const val LOCATION_ID_INCHEON = 28
 
 fun main() {
-    WebDriverManager.chromedriver().setup()
-
+    try {
+        WebDriverManager.chromedriver().setup()
+    } catch(ex: Exception) {
+        ex.printStackTrace()
+    }
     val log = LoggerFactory.getLogger(Main::class.java)
     val gson = Gson()
     val reader = File("crawlinfo.json").reader()
@@ -32,10 +37,10 @@ fun main() {
 
     val toCrawl = listOf(
 //        RequestTraffic(keys.requestBusTrafficKey),
-//        RequestBusStop(keys.requestBusStopKey),
+        RequestBusStop(crawlInfo.requestBusStopKey),
 //        RequestKakao(keys.requestKakaoKey),
 //        RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey),
-//        RequestBusCardBusStopSeleniumMulti(8, 16, false),
+        RequestBusCardBusStopSeleniumMulti(8, 16, false, crawlInfo.month),
         RequestBusCardBusUsageSeleniumMulti(4, 16, false, crawlInfo.year, crawlInfo.month),
     )
 
@@ -44,11 +49,12 @@ fun main() {
 
     val session = sessionFactory.openSession()
 //    RequestNaver(keys.requestNaverKeyId, keys.requestNaverKey).saveAll(session)
-    RequestBusCardBusUsageSeleniumMulti(0, 16, false, crawlInfo.year, crawlInfo.month).saveAll(session)
+//    RequestBusCardBusUsageSeleniumMulti(0, 16, false, crawlInfo.year, crawlInfo.month).saveAll(session)
     toCrawl.forEach {
         log.info("${it.getFolder().path} started")
         try {
-            it.progress(sessionFactory)
+            it.saveAll(session)
+//            it.progress(sessionFactory)
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
