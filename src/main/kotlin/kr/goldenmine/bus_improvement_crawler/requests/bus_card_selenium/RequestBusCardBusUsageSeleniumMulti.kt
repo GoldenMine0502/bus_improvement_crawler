@@ -323,7 +323,7 @@ class RequestBusCardBusUsageSeleniumMulti(
                         try {
 //                            log.info("$i ${file.name} ${folder.name} ${Arrays.toString(line)}")
 
-                            val busTrafficInfo = makeBusTrafficInfo(id, line)
+                            val busTrafficInfo = makeBusTrafficInfo(id, file.name, line)
                             id++
                             session.save(busTrafficInfo)
                         } catch(ex: Exception) {
@@ -344,9 +344,16 @@ class RequestBusCardBusUsageSeleniumMulti(
     // 노선,                      기종점,정류장순번,    정류장명,04시,05시,06시,07시,08시,09시,10시,11시,12시,13시,14시,15시,16시,17시,18시,19시,20시,21시,22시,23시,00시,01시,02시,03시,
     //  0,                          1, 2,              3,  4,5,6,7, 8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27
     // 58,�۵���2������ - �۵���2������,21,�۵�ǳ�����̿�2����,  0,3,3,8,11,4, 4,14, 7, 7, 9,11,15,18,20,14,15,15,22,10, 0, 0, 0, 0,
-    private fun makeBusTrafficInfo(id: Int, line: Array<String>): BusTrafficNodeInfo {
+    private fun makeBusTrafficInfo(id: Int, fileName: String, line: Array<String>): BusTrafficNodeInfo {
+        val split = fileName.split("-")
+
         return BusTrafficNodeInfo(
             id = id,
+
+            year = split[0].toInt(),
+            month = split[1].toInt(),
+            date = split[2].toInt(),
+
             routeNo = line[0],
             sequence = line[2].toInt(),
 

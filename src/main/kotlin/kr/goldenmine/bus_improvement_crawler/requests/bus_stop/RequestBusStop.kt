@@ -40,6 +40,17 @@ class RequestBusStop(
         val list = mutableSetOf<BusStopRouteResponseItem>()
 
         val busTemp = buses.toMutableSet()
+//        busTemp.add("0")
+//        busTemp.add("1")
+//        busTemp.add("2")
+//        busTemp.add("3")
+//        busTemp.add("4")
+//        busTemp.add("5")
+//        busTemp.add("6")
+//        busTemp.add("7")
+//        busTemp.add("8")
+//        busTemp.add("9")
+
 
         buses.forEach { routeNo ->
             if (busTemp.contains(routeNo)) {
@@ -55,6 +66,7 @@ class RequestBusStop(
             }
         }
 
+        log.info("buses count: ${list.size}")
         val file = File(getFolder(), "busids.json")
         if (!file.createNewFile()) file.createNewFile()
 

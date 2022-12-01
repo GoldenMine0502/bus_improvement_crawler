@@ -25,6 +25,18 @@ class BusTrafficNodeInfo(
     @Column(name = "sequence")
     val sequence: Int? = null,
 
+    @SerializedName("year")
+    @Column(name = "year")
+    val year: Int? = null,
+
+    @SerializedName("month")
+    @Column(name = "month")
+    val month: Int? = null,
+
+    @SerializedName("date")
+    @Column(name = "date")
+    val date: Int? = null,
+
     @SerializedName("time00")
     @Column(name = "time00")
     val time00: Int? = null,

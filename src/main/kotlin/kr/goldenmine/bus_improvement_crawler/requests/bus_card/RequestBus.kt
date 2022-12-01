@@ -64,7 +64,7 @@ class RequestBus(
 
                         val file = File(getFolder(), "bus$busName.json")
                         if (!file.exists()) file.createNewFile()
-                        file.writeText(gson.toJson(detail))
+                            file.writeText(gson.toJson(detail))
                     }
                 }
             } catch (ex: Exception) {
