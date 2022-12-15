@@ -1,9 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.gradle.jvm.tasks.Jar
 
 plugins {
     kotlin("jvm") version "1.7.10"
     kotlin("kapt") version "1.7.10"
+
+    id("com.github.johnrengelman.shadow") version "6.0.0"
 }
+
+
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
@@ -59,6 +64,11 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.9.0")
 }
 
+tasks.withType<JavaCompile> {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
 tasks.test {
     useJUnitPlatform()
 }
@@ -66,3 +76,42 @@ tasks.test {
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+
+
+val fatJar = task("fatJar", type = Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    baseName = "${project.name}-fat"
+
+    manifest {
+        attributes["Implementation-Title"] = "Gradle Jar File Example"
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = "kr.goldenmine.bus_improvement_crawler.MainJava"
+    }
+
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+
+    with(tasks["jar"] as CopySpec)
+}
+
+tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
+}
+
+tasks.jar {
+    manifest.attributes["Main-Class"] = "kr.goldenmine.bus_improvement_crawler.MainJava"
+}
+
+//tasks.withType<Jar> {
+//    manifest {
+//        attributes["Main-Class"] = "kr.goldenmine.bus_improvement_crawler.MainJava"
+//    }
+//}
+//
+//tasks.register<JavaExec>("runWithJavaExec") {
+//    description = "Run the main class with JavaExecTask"
+//    main = "kr.goldenmine.bus_improvement_crawler.MainJava"
+//    classpath = sourceSets["main"].runtimeClasspath
+//}

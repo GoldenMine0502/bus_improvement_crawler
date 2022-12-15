@@ -1,7 +1,6 @@
 package kr.goldenmine.bus_improvement_crawler.requests
 
 import com.google.gson.Gson
-import kr.goldenmine.bus_improvement_crawler.Main
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.slf4j.Logger
